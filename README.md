@@ -43,7 +43,7 @@ acm [OPCIONES] [ARCHIVO] [nombre=valor ...]
 
 | Opción | Efecto |
 |---|---|
-| `-e, --eval CÓDIGO` | Ejecuta código en vez de un archivo. Las expresiones sueltas muestran su valor. |
+| `-e, --eval CÓDIGO` | Ejecuta código en vez de un archivo. Las expresiones sueltas muestran su valor. El código va entre comillas simples o dobles y funciona igual en cmd, PowerShell y bash: `acm -e 'WRITE "hola"'`. |
 | `-` como archivo | Lee el script desde stdin (`echo 'PRINT 1' \| acm -`). |
 | `-c, --check` | Solo comprueba la sintaxis. |
 | `--info` | Muestra los metadatos y los argumentos `@ARG` de una extensión. |

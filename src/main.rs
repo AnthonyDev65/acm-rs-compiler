@@ -92,7 +92,10 @@ struct Cli {
 }
 
 fn main() {
-    let mut cli = Cli::parse();
+    let mut cli = match windows_eval_argv() {
+        Some(argv) => Cli::parse_from(argv),
+        None => Cli::parse(),
+    };
     enable_ansi();
     host::init_platform();
 
@@ -432,6 +435,111 @@ fn repl(mut it: Interp, out: Out, cancel: Arc<AtomicBool>) -> i32 {
         let _ = rl.save_history(h);
     }
     code
+}
+
+/// En Windows cada programa recibe la línea de comandos en bruto y la trocea a su manera:
+/// cmd.exe no entiende las comillas simples y PowerShell 5.1 no escapa las comillas dobles
+/// interiores. Para `-e`, se recupera el código exacto de la línea original.
+#[cfg(windows)]
+fn windows_eval_argv() -> Option<Vec<String>> {
+    use windows_sys::Win32::System::Environment::GetCommandLineW;
+    let raw = unsafe {
+        let p = GetCommandLineW();
+        let mut n = 0;
+        while *p.add(n) != 0 {
+            n += 1;
+        }
+        String::from_utf16_lossy(std::slice::from_raw_parts(p, n))
+    };
+    let (code, leftovers) = split_raw_eval(&raw)?;
+    let args: Vec<String> = std::env::args().collect();
+    let pos = args.iter().position(|a| a == "-e" || a == "--eval")?;
+    let mut argv: Vec<String> = args[..=pos].to_vec();
+    argv.push(code);
+    argv.extend(leftovers);
+    Some(argv)
+}
+
+#[cfg(not(windows))]
+fn windows_eval_argv() -> Option<Vec<String>> {
+    None
+}
+
+/// Separa el código que sigue a `-e` (entre comillas simples o dobles) del resto de argumentos.
+#[cfg_attr(not(windows), allow(dead_code))]
+fn split_raw_eval(raw: &str) -> Option<(String, Vec<String>)> {
+    let c: Vec<char> = raw.chars().collect();
+    let mut i = 0;
+    let mut rest_start = None;
+    while i < c.len() {
+        while i < c.len() && c[i].is_whitespace() {
+            i += 1;
+        }
+        let s = i;
+        let mut in_q = false;
+        while i < c.len() && (in_q || !c[i].is_whitespace()) {
+            if c[i] == '"' {
+                in_q = !in_q;
+            }
+            i += 1;
+        }
+        let tok: String = c[s..i].iter().collect();
+        if tok == "-e" || tok == "--eval" {
+            rest_start = Some(i);
+            break;
+        }
+    }
+    let rest: Vec<char> = c[rest_start?..].iter().copied().skip_while(|ch| ch.is_whitespace()).collect();
+    let q = *rest.first()?;
+    if q != '\'' && q != '"' {
+        return None;
+    }
+    // La comilla de cierre es la última igual a la de apertura seguida de espacio o fin de línea.
+    let close = (1..rest.len()).rev().find(|&k| rest[k] == q && rest.get(k + 1).is_none_or(|ch| ch.is_whitespace()))?;
+    let mut code: String = rest[1..close].iter().collect();
+    if q == '"' {
+        code = code.replace("\\\"", "\"");
+    }
+    let mut leftovers = Vec::new();
+    let mut cur = String::new();
+    let mut in_q = false;
+    for ch in rest[close + 1..].iter().copied() {
+        match ch {
+            '"' => in_q = !in_q,
+            ch if ch.is_whitespace() && !in_q => {
+                if !cur.is_empty() {
+                    leftovers.push(std::mem::take(&mut cur));
+                }
+            }
+            ch => cur.push(ch),
+        }
+    }
+    if !cur.is_empty() {
+        leftovers.push(cur);
+    }
+    Some((code, leftovers))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::split_raw_eval;
+
+    #[test]
+    fn raw_eval_lines() {
+        // cmd.exe con comillas simples
+        let (c, l) = split_raw_eval(r#"acm -e 'CLICK 500 300; WRITE "hola"' x=1 --json"#).unwrap();
+        assert_eq!(c, r#"CLICK 500 300; WRITE "hola""#);
+        assert_eq!(l, vec!["x=1", "--json"]);
+        // PowerShell 5.1 (comillas interiores sin escapar)
+        let (c, _) = split_raw_eval(r#""C:\x\acm.exe" -e "PRINT trim(exec("ver"))""#).unwrap();
+        assert_eq!(c, r#"PRINT trim(exec("ver"))"#);
+        // cmd con comillas escapadas correctamente
+        let (c, _) = split_raw_eval(r#"acm --json -e "WRITE \"hola\"""#).unwrap();
+        assert_eq!(c, r#"WRITE "hola""#);
+        // sin comillas: se usa el troceado normal
+        assert!(split_raw_eval("acm -e PRINT").is_none());
+        assert!(split_raw_eval("acm script.acm").is_none());
+    }
 }
 
 #[cfg(windows)]
