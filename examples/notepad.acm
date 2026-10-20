@@ -1,0 +1,27 @@
+// Abre el Bloc de notas, escribe, y comprueba lo escrito a través del portapapeles.
+// Lleva el ratón a la esquina superior izquierda para abortar (FAILSAFE).
+// Ejecutar:  acm examples/notepad.acm
+
+OPEN "notepad.exe"
+WAITWINDOW "Bloc de notas", 10000
+FOCUS "Bloc de notas"
+DELAY 500ms
+
+WRITE "Escrito por acm el ${now()}"
+KEYPRESS ENTER
+PASTE "Esta línea se pegó desde el portapapeles."
+KEYPRESS ENTER
+FOR i = 1 TO 3
+    WRITE "Línea ${i} de 3"
+    KEYPRESS ENTER
+NEXT
+
+// Seleccionar todo y copiar para verificar
+KEYPRESS CTRL + A
+KEYPRESS CTRL + C
+DELAY 200ms
+VAR texto = clipboard()
+ASSERT contains(texto, "Línea 3 de 3"), "el texto no llegó al Bloc de notas"
+PRINT "OK: el Bloc de notas contiene", len(lines(texto)), "líneas"
+SCREENSHOT "notepad.png"
+NOTIFY "Prueba del Bloc de notas completada"

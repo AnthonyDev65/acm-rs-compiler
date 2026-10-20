@@ -1,0 +1,21 @@
+// Ejemplo básico: no toca el ratón ni el teclado.
+// Ejecutar:  acm examples/hola.acm nombre=Ana
+
+IF EMPTY nombre
+    VAR nombre = "mundo"
+ENDIF
+PRINT "Hola, ${nombre}! Estás en ${OS}, pantalla ${screenwidth()}x${screenheight()}"
+
+FUNC ip(base, n)
+    RETURN base + "." + n
+ENDFUNC
+
+VAR ips = []
+FOR i = 1 TO 5
+    ips = push(ips, ip("192.168.1", i))
+NEXT
+PRINT "IPs:", join(ips, " | ")
+
+VAR ventanas = windows()
+PRINT "Hay ${ventanas.length} ventanas abiertas. La activa es: ${activewindow()}"
+PRINT "Ratón en", mousex(), mousey(), "color bajo el cursor:", pixel(mousex(), mousey())

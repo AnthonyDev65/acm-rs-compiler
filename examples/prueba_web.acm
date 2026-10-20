@@ -1,0 +1,17 @@
+// Prueba web automatizada (estilo test E2E) con Chrome sin ventana.
+// Ejecutar:  acm examples/prueba_web.acm        (o con --json para agentes)
+
+WEBBROWSER CHROME HEADLESS
+WEBOPEN "data:text/html,<h1 id='titulo'>Login</h1><input id='user'><input id='pass' type='password'><label><input type='checkbox' id='rec'>Recordar</label><button id='go' onclick=\"document.getElementById('titulo').innerText='Bienvenido '+document.getElementById('user').value\">Entrar</button>"
+
+WEBINPUT "#user" "anthoni"
+WEBINPUT "//input[@id='pass']" "secreto"
+WEBCHECK "#rec" TRUE
+WEBCLICK "#go"
+
+WEBGET "#titulo" titulo
+ASSERT titulo == "Bienvenido anthoni", "login fallido: '${titulo}'"
+ASSERT webjs("document.getElementById('rec').checked") == TRUE
+
+WEBSCREENSHOT "prueba_web.png"
+PRINT "PASS:", titulo
