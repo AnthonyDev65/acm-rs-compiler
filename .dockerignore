@@ -1,0 +1,9 @@
+# Solo docs/Dockerfile usa Docker; la web necesita docs/, examples/ y README.md.
+target
+vendor
+ide
+src
+**/node_modules
+docs/dist
+docs/.astro
+.git
