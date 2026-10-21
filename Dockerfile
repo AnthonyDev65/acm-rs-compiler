@@ -1,6 +1,6 @@
-# Web de documentación de acm (Astro estático servido con nginx).
+# Imagen de la web de documentación de acm (Astro estático servido con nginx), no del intérprete.
 # El contexto de build es la RAÍZ del repositorio: la web importa README.md y examples/.
-#   docker build -f docs/Dockerfile -t acm-docs .
+#   docker build -t acm-docs .
 #   docker run -p 8080:80 acm-docs
 
 FROM node:22-alpine AS build

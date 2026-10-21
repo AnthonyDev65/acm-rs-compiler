@@ -1,4 +1,4 @@
-# Solo docs/Dockerfile usa Docker; la web necesita docs/, examples/ y README.md.
+# Solo el Dockerfile de la web usa Docker; la web necesita docs/, examples/ y README.md.
 target
 vendor
 ide
