@@ -1,0 +1,37 @@
+---
+import { OSES } from "../lib/install";
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+---
+
+<div class:list={["os-switch", cls]} role="group" aria-label="Sistema operativo">
+  {OSES.map((o) => (
+    <button type="button" data-os-set={o.id} aria-pressed="false">{o.label}</button>
+  ))}
+</div>
+
+<style>
+  .os-switch { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--bg-1); border: 1px solid var(--line-2); }
+  button {
+    height: 30px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent;
+    font-size: 13px; font-weight: 500; color: var(--fg-2); cursor: pointer;
+    transition: background-color 150ms, color 150ms;
+  }
+  button:hover { color: var(--fg); }
+  button[aria-pressed="true"] { background: var(--bg-3); color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-2); }
+</style>
+
+<script>
+  const sync = () => {
+    const os = document.documentElement.dataset.os;
+    document.querySelectorAll<HTMLButtonElement>("[data-os-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.osSet === os)));
+  };
+  document.querySelectorAll<HTMLButtonElement>("[data-os-set]").forEach((b) => {
+    b.addEventListener("click", () => {
+      document.documentElement.dataset.os = b.dataset.osSet;
+      try { localStorage.setItem("acm-os", b.dataset.osSet!); } catch {}
+      sync();
+    });
+  });
+  sync();
+</script>

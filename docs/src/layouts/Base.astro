@@ -25,6 +25,18 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet" />
+    <script is:inline>
+      // Sistema para los comandos de instalación: el elegido antes, o el detectado.
+      (function () {
+        var os = null;
+        try { os = localStorage.getItem("acm-os"); } catch (e) {}
+        if (os !== "windows" && os !== "macos" && os !== "linux") {
+          var p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent).toLowerCase();
+          os = /mac|iphone|ipad/.test(p) ? "macos" : /linux|x11|android|cros|chrome os/.test(p) ? "linux" : "windows";
+        }
+        document.documentElement.dataset.os = os;
+      })();
+    </script>
   </head>
   <body>
     <Nav />
