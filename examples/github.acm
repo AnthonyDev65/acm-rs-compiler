@@ -1,0 +1,8 @@
+// Abre el perfil de GitHub en el navegador predeterminado (con tu sesión iniciada)
+// y avisa al terminar.
+
+OPEN "https://github.com/AnthonyDev65"
+WAITWINDOW "GitHub", 15000
+FOCUS "GitHub"
+
+ALERT "Controlé tu computadora desde la terminal"

@@ -12,6 +12,10 @@ Sirve para automatizaciones personales y para que **agentes de IA** controlen el
 
 Los scripts usan la extensión `.acm`. Las extensiones con argumentos configurables usan `.acmx`.
 
+![El IDE de acm ejecuta un script que abre un perfil de GitHub en el navegador y muestra un ALERT](https://raw.githubusercontent.com/AnthonyDev65/acm-rs-compiler/main/docs/public/demo.gif)
+
+*El IDE ejecutando [`examples/github.acm`](https://github.com/AnthonyDev65/acm-rs-compiler/blob/main/examples/github.acm): abre un perfil de GitHub y avisa con un `ALERT`.*
+
 ---
 
 ## Instalación
