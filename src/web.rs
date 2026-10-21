@@ -32,7 +32,12 @@ pub struct Web {
     browser: Option<Browser>,
     tabs: Vec<Arc<Tab>>,
     cur: usize,
+    /// El navegador se cerró sin WEBCLOSE (normalmente, lo cerró el usuario).
+    /// Mientras sea así, solo WEBOPEN y WEBTAB abren uno nuevo.
+    lost: bool,
 }
+
+const LOST_MSG: &str = "el navegador se cerró; usa WEBOPEN para abrir uno nuevo";
 
 pub fn is_xpath(sel: &str) -> bool {
     sel.starts_with('/') || sel.starts_with('(') || sel.starts_with("./")
@@ -58,11 +63,25 @@ impl Web {
             browser: None,
             tabs: Vec::new(),
             cur: 0,
+            lost: false,
         }
     }
 
     pub fn is_running(&self) -> bool {
         self.browser.is_some()
+    }
+
+    /// Comprueba si el navegador sigue abierto. Si lo han cerrado, lo marca como perdido.
+    pub fn is_alive(&mut self) -> bool {
+        match &self.browser {
+            None => false,
+            Some(b) if b.get_version().is_ok() && !self.tabs.is_empty() => true,
+            Some(_) => {
+                self.close();
+                self.lost = true;
+                false
+            }
+        }
     }
 
     /// `WEBBROWSER CHROME|EDGE|<ruta> [HEADLESS|VISIBLE]`
@@ -113,12 +132,14 @@ impl Web {
         }
     }
 
-    fn ensure(&mut self) -> Result<(), String> {
-        if let Some(b) = &self.browser {
-            if b.get_version().is_ok() && !self.tabs.is_empty() {
-                return Ok(());
-            }
-            self.close();
+    /// Abre el navegador si hace falta. `launch` indica si el comando puede abrir uno nuevo
+    /// después de que el usuario cerrara el anterior (WEBOPEN, WEBTAB); el resto falla.
+    fn ensure(&mut self, launch: bool) -> Result<(), String> {
+        if self.browser.is_some() && self.is_alive() {
+            return Ok(());
+        }
+        if self.lost && !launch {
+            return Err(LOST_MSG.into());
         }
         let path = match &self.exe {
             Some(p) => p.clone(),
@@ -155,24 +176,28 @@ impl Web {
         self.tabs = vec![tab];
         self.cur = 0;
         self.browser = Some(browser);
+        self.lost = false;
         Ok(())
     }
 
     fn tab(&mut self) -> Result<Arc<Tab>, String> {
-        self.ensure()?;
+        self.ensure(false)?;
         Ok(self.tabs[self.cur].clone())
     }
 
+    /// Cierra el navegador (WEBCLOSE). Después, cualquier comando web vuelve a abrirlo.
     pub fn close(&mut self) {
         for t in self.tabs.drain(..) {
             let _ = t.close(false);
         }
         self.browser = None;
         self.cur = 0;
+        self.lost = false;
     }
 
     pub fn open(&mut self, url: &str, nowait: bool) -> Result<(), String> {
-        let tab = self.tab()?;
+        self.ensure(true)?;
+        let tab = self.tabs[self.cur].clone();
         let url = normalize_url(url);
         if nowait {
             let js = format!("window.location.href = {}", serde_json::to_string(&url).unwrap());
@@ -185,7 +210,7 @@ impl Web {
     }
 
     pub fn new_tab(&mut self, url: Option<&str>, nowait: bool) -> Result<(), String> {
-        self.ensure()?;
+        self.ensure(true)?;
         let tab = self.browser.as_ref().unwrap().new_tab().map_err(e)?;
         tab.set_default_timeout(self.timeout);
         self.tabs.push(tab.clone());
@@ -198,7 +223,7 @@ impl Web {
     }
 
     pub fn close_tab(&mut self) -> Result<(), String> {
-        self.ensure()?;
+        self.ensure(false)?;
         if self.tabs.len() <= 1 {
             return Err("no se puede cerrar la última pestaña (usa WEBCLOSE)".into());
         }
@@ -210,7 +235,7 @@ impl Web {
     }
 
     pub fn switch_tab(&mut self, i: usize) -> Result<(), String> {
-        self.ensure()?;
+        self.ensure(false)?;
         if i >= self.tabs.len() {
             return Err(format!("la pestaña {} no existe (hay {}, se cuentan desde 0)", i, self.tabs.len()));
         }

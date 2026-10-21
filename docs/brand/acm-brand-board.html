@@ -1,0 +1,139 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1600px; height: 1200px; background: #050505; padding: 28px; font-family: Geist, sans-serif; color: #ededed; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 16px; height: 100%; }
+  .p { position: relative; background: #000; border: 1px solid #1a1a1a; border-radius: 14px; overflow: hidden; }
+  .lab { position: absolute; left: 20px; bottom: 16px; font-size: 12px; color: #6b6b6b; letter-spacing: 0.02em; }
+  .num { position: absolute; right: 20px; bottom: 16px; font: 11px "Geist Mono"; color: #3a3a3a; }
+  .center { display: grid; place-items: center; height: 100%; }
+  .mono { font-family: "Geist Mono", monospace; }
+  .blue { color: #3291ff; }
+  svg { display: block; }
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="ptr" viewBox="0 0 24 24"><path d="M3.75 2.75v14.6l3.9-3.6 2.65 5.95 2.45-1.1-2.65-5.9h5.5z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="mark" viewBox="0 0 24 24">
+    <use href="#ptr" style="color: var(--p, #ededed)"/>
+    <rect x="15.25" y="17.75" width="6" height="2.75" rx="0.5" fill="var(--c, #3291ff)"/>
+  </symbol>
+</defs></svg>
+
+<div class="grid">
+  <!-- 1 portada -->
+  <div class="p" style="background: radial-gradient(70% 60% at 50% 40%, rgba(10,114,239,.18), transparent 70%), #000">
+    <div class="center"><div style="display:flex;align-items:center;gap:22px">
+      <svg width="104" height="104"><use href="#mark"/></svg>
+      <span style="font-size:104px;font-weight:600;letter-spacing:-0.06em;line-height:1">acm</span>
+    </div></div>
+    <span class="lab">Logotipo</span><span class="num">01</span>
+  </div>
+
+  <!-- 2 construcción -->
+  <div class="p">
+    <div class="center">
+      <svg width="300" height="300" viewBox="0 0 24 24">
+        <defs><pattern id="g" width="1" height="1" patternUnits="userSpaceOnUse"><path d="M1 0H0V1" fill="none" stroke="#1c1c1c" stroke-width="0.04"/></pattern></defs>
+        <rect width="24" height="24" fill="url(#g)"/>
+        <rect x="2" y="2" width="20" height="20" fill="none" stroke="#2a2a2a" stroke-width="0.05" stroke-dasharray="0.3 0.3"/>
+        <use href="#ptr" style="color:#ededed" opacity="0.92"/>
+        <rect x="15.25" y="17.75" width="6" height="2.75" rx="0.5" fill="#3291ff"/>
+        <path d="M3.75 2.75L15.8 14.05" stroke="#3291ff" stroke-width="0.06" stroke-dasharray="0.25 0.2"/>
+        <path d="M3 20.5H22" stroke="#3291ff" stroke-width="0.06" stroke-dasharray="0.25 0.2"/>
+        <circle cx="3.75" cy="2.75" r="0.35" fill="none" stroke="#3291ff" stroke-width="0.07"/>
+        <text x="16" y="16.6" font-size="0.85" fill="#6b6b6b" font-family="Geist Mono">caret</text>
+        <text x="4.6" y="2.4" font-size="0.85" fill="#6b6b6b" font-family="Geist Mono">0,0</text>
+      </svg>
+    </div>
+    <span class="lab">Construcción · rejilla 24 · el clic y la tecla comparten línea base</span><span class="num">02</span>
+  </div>
+
+  <!-- 3 aplicación digital -->
+  <div class="p" style="padding:26px 22px">
+    <div style="border:1px solid #2e2e2e;border-radius:10px;overflow:hidden;background:#0a0a0a">
+      <div style="display:flex;align-items:flex-end;gap:2px;height:38px;padding:0 10px;background:#050505">
+        <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 12px;background:#0a0a0a;border-radius:8px 8px 0 0;font-size:12px">
+          <span style="display:grid;place-items:center;width:16px;height:16px;border-radius:4px;background:#000;border:1px solid #2e2e2e"><svg width="12" height="12"><use href="#mark"/></svg></span>
+          acm — el lenguaje para automatizar tu PC
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid #1f1f1f">
+        <div class="mono" style="flex:1;font-size:11px;color:#a1a1a1;background:#111;border-radius:6px;padding:5px 10px">acm.dev/docs</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;border:1px solid #2e2e2e;border-radius:10px;background:#000;display:flex;align-items:center;gap:8px;padding:8px 10px">
+      <span style="display:grid;place-items:center;width:30px;height:30px;border-radius:8px;border:1px solid #2e2e2e"><svg width="18" height="18"><use href="#mark"/></svg></span>
+      <span style="display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.06);font-size:13px;font-weight:500">Archivo</span>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:8px;background:#ededed;color:#000;font-size:13px;font-weight:500">▶ Ejecutar</span>
+    </div>
+    <span class="lab">Pestaña del navegador · barra del IDE</span><span class="num">03</span>
+  </div>
+
+  <!-- 4 esencia -->
+  <div class="p">
+    <div style="position:absolute;left:34px;top:40px;font-size:58px;font-weight:600;letter-spacing:-0.055em;line-height:1">Tu PC,<br>en un script<span class="blue">_</span></div>
+    <span class="lab">Esencia</span><span class="num">04</span>
+  </div>
+
+  <!-- 5 color -->
+  <div class="p" style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:0">
+    <div style="background:#000;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:46px"><b style="font-weight:500">Negro</b><span class="mono" style="font-size:11px;color:#6b6b6b">#000000</span></div>
+    <div style="display:grid;grid-template-rows:1fr 1fr">
+      <div style="background:#0a0a0a;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;border-left:1px solid #1a1a1a"><b style="font-weight:500;font-size:13px">Panel</b><span class="mono" style="font-size:11px;color:#6b6b6b">#0A0A0A</span></div>
+      <div style="background:#ededed;color:#000;padding:16px;display:flex;flex-direction:column;justify-content:flex-end"><b style="font-weight:500;font-size:13px">Tinta</b><span class="mono" style="font-size:11px;color:#555">#EDEDED</span></div>
+    </div>
+    <div style="background:#3291ff;color:#000;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:46px"><b style="font-weight:600">Caret</b><span class="mono" style="font-size:11px">#3291FF</span></div>
+    <span class="lab" style="color:#000;opacity:.6;left:auto;right:20px">Color</span>
+  </div>
+
+  <!-- 6 tipografía -->
+  <div class="p" style="padding:30px 32px">
+    <div style="display:flex;align-items:flex-end;gap:26px">
+      <span style="font-size:120px;font-weight:600;letter-spacing:-0.06em;line-height:.85">Aa</span>
+      <div style="padding-bottom:6px"><b style="font-weight:600;font-size:18px">Geist</b><div style="color:#a1a1a1;font-size:13px">Titulares, interfaz y texto</div></div>
+    </div>
+    <div class="mono" style="margin-top:34px;font-size:22px;line-height:1.5"><span class="blue">CLICK</span> 420 300<br><span class="blue">WRITE</span> <span style="color:#a5d6ff">"hola"</span></div>
+    <div style="margin-top:8px;color:#a1a1a1;font-size:13px"><b style="color:#ededed;font-weight:600">Geist Mono</b> · código y terminal</div>
+    <span class="lab">Tipografía</span><span class="num">06</span>
+  </div>
+
+  <!-- 7 icono de app -->
+  <div class="p" style="background:#0a0a0a">
+    <div class="center"><div style="display:flex;align-items:flex-end;gap:26px">
+      <div style="width:150px;height:150px;border-radius:34px;background:#000;border:1px solid #2e2e2e;display:grid;place-items:center;box-shadow:0 30px 60px -20px rgba(50,145,255,.35)"><svg width="98" height="98"><use href="#mark"/></svg></div>
+      <div style="width:76px;height:76px;border-radius:18px;background:#000;border:1px solid #2e2e2e;display:grid;place-items:center"><svg width="50" height="50"><use href="#mark"/></svg></div>
+      <div style="width:40px;height:40px;border-radius:10px;background:#000;border:1px solid #2e2e2e;display:grid;place-items:center"><svg width="26" height="26"><use href="#mark"/></svg></div>
+      <div style="width:22px;height:22px;border-radius:5px;background:#000;border:1px solid #2e2e2e;display:grid;place-items:center"><svg width="16" height="16"><use href="#mark"/></svg></div>
+      <div style="width:22px;height:22px;border-radius:5px;background:#fff;display:grid;place-items:center;--p:#000"><svg width="16" height="16" style="--p:#000"><use href="#mark"/></svg></div>
+    </div></div>
+    <span class="lab">Icono de app · 1024 → 16 px</span><span class="num">07</span>
+  </div>
+
+  <!-- 8 atmósfera -->
+  <div class="p" style="background:#000">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(#1d3b66 1.1px, transparent 1.3px);background-size:9px 9px;-webkit-mask-image:radial-gradient(60% 70% at 70% 60%, #000, transparent);mask-image:radial-gradient(60% 70% at 70% 60%, #000, transparent)"></div>
+    <svg width="440" height="440" style="position:absolute;right:-90px;bottom:-120px;--p:#0d0d0d;filter:drop-shadow(0 0 40px rgba(50,145,255,.25))"><use href="#mark"/></svg>
+    <div class="mono" style="position:absolute;left:28px;top:30px;font-size:13px;line-height:1.9;color:#6b6b6b">
+      {"event":"step","line":3}<br>{"event":"step","line":4}<br><span style="color:#3fb950">{"event":"done","ok":true}</span>
+    </div>
+    <span class="lab">Dirección visual · puntos, terminal, brillo azul</span><span class="num">08</span>
+  </div>
+
+  <!-- 9 sistema -->
+  <div class="p" style="padding:30px 28px">
+    <div style="display:grid;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px"><svg width="22" height="22" style="--c:#6b6b6b"><use href="#mark"/></svg><span style="font-size:14px">En espera</span><span class="mono" style="margin-left:auto;font-size:11px;color:#6b6b6b">caret gris</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><svg width="22" height="22"><use href="#mark"/></svg><span style="font-size:14px">Ejecutando</span><span class="mono" style="margin-left:auto;font-size:11px;color:#3291ff">caret azul, parpadea</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><svg width="22" height="22" style="--c:#3fb950"><use href="#mark"/></svg><span style="font-size:14px">Terminado</span><span class="mono" style="margin-left:auto;font-size:11px;color:#3fb950">código 0</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><svg width="22" height="22" style="--c:#ff4d4d"><use href="#mark"/></svg><span style="font-size:14px">Error</span><span class="mono" style="margin-left:auto;font-size:11px;color:#ff4d4d">código 1 · 2 · 130</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:22px">
+      <span class="mono" style="font-size:12px;padding:6px 12px;border:1px solid #2e2e2e;border-radius:999px;color:#a1a1a1">$ cargo install --path .</span>
+      <span class="mono" style="font-size:12px;padding:6px 10px;border:1px solid #2e2e2e;border-radius:6px;color:#a1a1a1">F5</span>
+    </div>
+    <span class="lab">Sistema · el caret indica el estado</span><span class="num">09</span>
+  </div>
+</div>
+</body></html>

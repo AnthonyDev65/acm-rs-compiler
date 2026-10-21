@@ -1,0 +1,104 @@
+---
+import { u, REPO } from "../lib/url";
+---
+
+<section class="hero">
+  <div class="glow" aria-hidden="true"></div>
+  <svg class="mark" viewBox="0 0 1000 300" aria-hidden="true">
+    <defs>
+      <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff" />
+        <stop offset="0.55" stop-color="#fff" />
+        <stop offset="1" stop-color="#fff" stop-opacity="0" />
+      </linearGradient>
+      <mask id="fade-mask"><rect width="1000" height="300" fill="url(#fade)" /></mask>
+    </defs>
+    <g mask="url(#fade-mask)">
+      <text x="500" y="270" text-anchor="middle">ACM</text>
+    </g>
+  </svg>
+
+  <div class="copy">
+    <h1>El lenguaje para<br />automatizar tu PC</h1>
+    <p class="sub">
+      Controla ratón, teclado, ventanas y Chrome con una sintaxis que se lee sola.
+      Escrito en Rust, con <strong>salida JSON para agentes de IA</strong> y modo simulación.
+    </p>
+
+    <div class="actions">
+      <button class="cmd" type="button" data-copy="cargo install --path ." aria-label="Copiar comando de instalación">
+        <span class="dollar">$</span>
+        <span>cargo install --path .</span>
+        <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span class="done" aria-live="polite"></span>
+      </button>
+    </div>
+    <div class="links">
+      <a class="btn btn-primary" href={u("/docs/")}>Leer la documentación</a>
+      <a class="btn btn-secondary" href={REPO} target="_blank" rel="noopener">Ver en GitHub</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative; overflow: hidden;
+    padding: clamp(72px, 10vw, 120px) var(--pad) 40px;
+    text-align: center;
+  }
+  .glow {
+    position: absolute; left: 50%; top: -220px; width: 900px; height: 520px; transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(10, 114, 239, 0.22), transparent);
+    pointer-events: none;
+  }
+  .mark { width: min(820px, 92vw); margin: 0 auto -2.2vw; overflow: visible; }
+  .mark text {
+    font-family: var(--sans); font-weight: 600; font-size: 330px; letter-spacing: -6px;
+    fill: transparent; stroke: var(--blue); stroke-width: 2.5;
+    stroke-dasharray: 2400; stroke-dashoffset: 2400;
+    animation: draw 2.4s var(--ease) 0.15s forwards, fillin 1.2s ease 2s forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fillin { to { fill: rgba(10, 114, 239, 0.06); } }
+  .copy { position: relative; }
+  h1 {
+    font-size: clamp(2.5rem, 1.2rem + 5vw, 4.75rem);
+    font-weight: 600; letter-spacing: -0.055em; line-height: 1.02;
+    animation: rise 900ms var(--ease) both 0.2s;
+  }
+  .sub {
+    margin: 24px auto 0; max-width: 620px;
+    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem); color: var(--fg-2);
+    animation: rise 900ms var(--ease) both 0.35s;
+  }
+  .sub strong { color: var(--fg); font-weight: 600; }
+  .actions { margin-top: 36px; display: flex; justify-content: center; animation: rise 900ms var(--ease) both 0.5s; }
+  .cmd {
+    position: relative; display: inline-flex; align-items: center; gap: 12px;
+    height: 48px; padding: 0 16px 0 18px; border-radius: 999px;
+    background: var(--bg-1); border: 1px solid var(--line-2);
+    font-family: var(--mono); font-size: 14px; cursor: pointer;
+    transition: border-color 150ms, background-color 150ms;
+  }
+  .cmd:hover { border-color: #4a4a4a; background: var(--bg-2); }
+  .dollar { color: var(--fg-3); }
+  .ico { color: var(--fg-2); }
+  .done { position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%); font-family: var(--sans); font-size: 12px; color: var(--fg-2); white-space: nowrap; }
+  .links { margin-top: 18px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: rise 900ms var(--ease) both 0.6s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  @media (max-width: 520px) {
+    .mark { margin-bottom: -4vw; }
+    .cmd { font-size: 13px; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) => {
+    b.addEventListener("click", async () => {
+      const out = b.querySelector(".done");
+      try { await navigator.clipboard.writeText(b.dataset.copy!); if (out) out.textContent = "Copiado"; }
+      catch { if (out) out.textContent = "Cópialo a mano"; }
+      setTimeout(() => out && (out.textContent = ""), 1600);
+    });
+  });
+</script>

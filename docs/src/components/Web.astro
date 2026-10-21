@@ -1,0 +1,81 @@
+---
+import { Code } from "astro:components";
+import { acmGrammar } from "../lib/acm-grammar.mjs";
+import { u } from "../lib/url";
+
+const snippet = `WEBBROWSER CHROME HEADLESS
+WEBOPEN "https://example.com/login"
+
+WEBINPUT "#user" "anthoni"
+WEBINPUT "//input[@id='pass']" "secreto"
+WEBCHECK "#rec" TRUE
+WEBCLICK "#go"
+
+WEBGET "#titulo" titulo
+ASSERT titulo == "Bienvenido anthoni"
+WEBSCREENSHOT "prueba_web.png"`;
+
+const facts = [
+  ["CSS o XPath", "Si el selector empieza por / o ( es XPath; si no, CSS."],
+  ["Esperas automáticas", "Cada comando espera al elemento hasta 10 s. WEBWAIT espera a VISIBLE, HIDDEN, CLICKABLE o GONE."],
+  ["Perfiles persistentes", "WEBPROFILE \"carpeta\" conserva las sesiones iniciadas entre ejecuciones."],
+  ["≈ 2 ms por llamada", "acm incluye una copia parcheada de headless_chrome: cada llamada bajó de unos 100 ms a unos 2 ms."],
+];
+---
+
+<section class="web wrap" id="web">
+  <h2 class="h-section reveal">Chrome, Edge y Brave.<br />Sin WebDriver.</h2>
+  <p class="lede reveal" style="--d:80ms">
+    El navegador se abre con el primer comando web y se controla por el protocolo DevTools. <strong>Pruebas E2E en diez líneas</strong>, con o sin ventana.
+  </p>
+
+  <div class="split">
+    <div class="window reveal" style="--d:100ms">
+      <div class="window-bar"><div class="dots"><i></i><i></i><i></i></div><span class="mono">login.acm</span></div>
+      <Code code={snippet} lang={acmGrammar as any} theme="github-dark-default" />
+    </div>
+
+    <figure class="shot reveal" style="--d:180ms">
+      <div class="window">
+        <div class="window-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span class="url mono">Chrome · HEADLESS</span>
+        </div>
+        <div class="img"><img src={u("/prueba_web.png")} width="1344" height="746" alt="Captura tomada por acm: la página dice Bienvenido anthoni con el formulario de login relleno" loading="lazy" /></div>
+      </div>
+      <figcaption>Captura real tomada por <span class="mono">WEBSCREENSHOT</span> al ejecutar <span class="mono">examples/prueba_web.acm</span>.</figcaption>
+    </figure>
+  </div>
+
+  <ul class="facts">
+    {facts.map(([t, d], i) => (
+      <li class="reveal" style={`--d:${i * 70}ms`}><h3>{t}</h3><p>{d}</p></li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .web { padding-top: 160px; }
+  .lede { margin-top: 20px; }
+  .split { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .url { margin-left: auto; font-size: 11px; color: var(--fg-3); }
+  .img { background: #fff; height: 300px; overflow: hidden; }
+  .img img { width: 230%; max-width: none; height: auto; }
+  figcaption { margin-top: 12px; font-size: 13px; color: var(--fg-3); }
+  .facts { margin-top: 56px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .facts li { padding: 24px 24px 0 0; }
+  .facts li + li { padding-left: 24px; border-left: 1px solid var(--line); }
+  .facts h3 { font-size: 15px; font-weight: 600; }
+  .facts p { margin-top: 6px; font-size: 14px; color: var(--fg-2); }
+  @media (max-width: 960px) {
+    .split { grid-template-columns: 1fr; }
+    .facts { grid-template-columns: 1fr 1fr; }
+    .facts li:nth-child(3) { border-left: 0; padding-left: 0; }
+    .web { padding-top: 112px; }
+  }
+  @media (max-width: 560px) {
+    .facts { grid-template-columns: 1fr; }
+    .facts li + li { border-left: 0; padding-left: 0; }
+    .img { height: 200px; }
+  }
+</style>

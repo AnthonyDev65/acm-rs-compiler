@@ -1,0 +1,147 @@
+---
+import * as readme from "../../../README.md";
+import { u, REPO } from "../lib/url";
+import Mark from "./Mark.astro";
+
+const items = readme
+  .getHeadings()
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ text: h.text, slug: h.slug, depth: h.depth }));
+---
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href={u("/")} aria-label="acm, inicio">
+      <Mark size={24} class="blink" />
+      <span class="word">acm</span>
+    </a>
+    <nav class="links" aria-label="Principal">
+      <a href={u("/docs/")}>Docs</a>
+      <a href={u("/#lenguaje")}>Lenguaje</a>
+      <a href={u("/#web")}>Web</a>
+      <a href={u("/#agentes")}>Agentes</a>
+      <a href={`${REPO}/tree/main/examples`} target="_blank" rel="noopener">Ejemplos <span class="ext">↗</span></a>
+    </nav>
+    <div class="right">
+      <button class="search" type="button" data-open-search>
+        <span>Buscar…</span><kbd>Ctrl K</kbd>
+      </button>
+      <a class="btn btn-secondary start" href={u("/docs/#instalación")}>Instalar</a>
+      <a class="gh" href={REPO} target="_blank" rel="noopener" aria-label="Repositorio en GitHub">
+        <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<dialog class="palette" id="palette" aria-label="Buscar en la documentación">
+  <div class="palette-in">
+    <input id="palette-q" type="search" placeholder="Busca un comando o una sección…" autocomplete="off" spellcheck="false" />
+    <ul id="palette-list">
+      {items.map((it) => (
+        <li data-text={it.text.toLowerCase()}>
+          <a href={u(`/docs/#${it.slug}`)} class={`d${it.depth}`}>
+            <span>{it.text}</span><span class="go">↵</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="palette-empty" hidden>Sin resultados.</p>
+  </div>
+</dialog>
+
+<style>
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms;
+  }
+  :global(body.scrolled) .nav { border-bottom-color: var(--line); }
+  .nav-in {
+    max-width: calc(var(--wrap) + var(--pad) * 2); margin: 0 auto; padding: 0 var(--pad);
+    height: 64px; display: flex; align-items: center; gap: 28px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .word { font-weight: 600; font-size: 21px; letter-spacing: -0.05em; }
+  .links { display: flex; gap: 24px; font-size: 14px; color: var(--fg-2); }
+  .links a { transition: color 150ms; }
+  .links a:hover { color: var(--fg); }
+  .ext { font-size: 11px; }
+  .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .search {
+    display: flex; align-items: center; gap: 28px; height: 40px; padding: 0 8px 0 12px;
+    background: var(--bg-1); border: 1px solid var(--line-2); border-radius: 10px;
+    color: var(--fg-2); font-size: 14px; cursor: pointer; transition: border-color 150ms, color 150ms;
+  }
+  .search:hover { border-color: #444; color: var(--fg); }
+  .search kbd { font-size: 11px; padding: 2px 6px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--bg-2); }
+  .start { height: 40px; border-radius: 10px; }
+  .gh { color: var(--fg); padding: 6px; opacity: 0.85; transition: opacity 150ms; }
+  .gh:hover { opacity: 1; }
+
+  .palette {
+    width: min(640px, calc(100vw - 32px)); margin: 12vh auto auto; padding: 0;
+    background: var(--bg-1); color: var(--fg);
+    border: 1px solid var(--line-2); border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+  .palette::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); }
+  .palette input {
+    width: 100%; height: 56px; padding: 0 18px; border: 0; outline: 0;
+    background: transparent; border-bottom: 1px solid var(--line); font-size: 16px;
+  }
+  .palette ul { max-height: 52vh; overflow: auto; padding: 8px; }
+  .palette li a {
+    display: flex; justify-content: space-between; padding: 9px 12px; border-radius: 8px;
+    font-size: 14px; color: var(--fg-2);
+  }
+  .palette li a.d3 { padding-left: 28px; }
+  .palette li a:hover, .palette li a:focus-visible, .palette li.active a { background: var(--bg-3); color: var(--fg); outline: none; }
+  .palette .go { opacity: 0; font-size: 12px; }
+  .palette li.active .go { opacity: 0.6; }
+  .palette-empty { padding: 20px; color: var(--fg-3); font-size: 14px; }
+
+  @media (max-width: 960px) {
+    .links { display: none; }
+    .search span { display: none; }
+    .search { gap: 0; }
+  }
+  @media (max-width: 480px) {
+    .search kbd { display: none; }
+    .search::before { content: "⌕"; font-size: 18px; padding-right: 4px; }
+  }
+</style>
+
+<script>
+  const dlg = document.getElementById("palette") as HTMLDialogElement;
+  const q = document.getElementById("palette-q") as HTMLInputElement;
+  const lis = [...dlg.querySelectorAll<HTMLLIElement>("li")];
+  const empty = dlg.querySelector<HTMLElement>(".palette-empty")!;
+  let idx = 0;
+  const visible = () => lis.filter((l) => !l.hidden);
+  const mark = () => visible().forEach((l, i) => l.classList.toggle("active", i === idx));
+  const open = () => { q.value = ""; filter(); dlg.showModal(); q.focus(); };
+  function filter() {
+    const t = q.value.trim().toLowerCase();
+    lis.forEach((l) => (l.hidden = !!t && !l.dataset.text!.includes(t)));
+    empty.hidden = visible().length > 0;
+    idx = 0; mark();
+  }
+  q.addEventListener("input", filter);
+  q.addEventListener("keydown", (e) => {
+    const v = visible();
+    if (e.key === "ArrowDown") { idx = Math.min(idx + 1, v.length - 1); mark(); v[idx]?.scrollIntoView({ block: "nearest" }); e.preventDefault(); }
+    if (e.key === "ArrowUp") { idx = Math.max(idx - 1, 0); mark(); v[idx]?.scrollIntoView({ block: "nearest" }); e.preventDefault(); }
+    if (e.key === "Enter") { v[idx]?.querySelector("a")?.click(); dlg.close(); }
+  });
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); if ((e.target as HTMLElement).closest("a")) dlg.close(); });
+  document.querySelectorAll("[data-open-search]").forEach((b) => b.addEventListener("click", open));
+  addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); dlg.open ? dlg.close() : open(); }
+  });
+  const onScroll = () => document.body.classList.toggle("scrolled", scrollY > 8);
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+</script>

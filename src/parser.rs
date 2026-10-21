@@ -113,6 +113,8 @@ pub enum Cmd {
     WebBack,
     WebReload,
     WebClose,
+    /// Espera a que el usuario cierre el navegador (con tiempo máximo opcional, en ms).
+    WebWaitClose(Option<Expr>),
 }
 
 #[derive(Debug)]
@@ -753,6 +755,7 @@ fn simple_kind(kw: &str, rest: &str, full: &str) -> Result<Kind, String> {
         "WEBBACK" => cmd(Cmd::WebBack),
         "WEBRELOAD" => cmd(Cmd::WebReload),
         "WEBCLOSE" => cmd(Cmd::WebClose),
+        "WEBWAITCLOSE" | "WEBWAITCLOSED" => cmd(Cmd::WebWaitClose(if rest.trim().is_empty() { None } else { Some(parse_expr_str(rest)?) })),
         "WEBINPUT" | "WEBSELECT" | "WEBCHECK" => {
             let mut c = cur()?;
             let sel = c.expr()?;

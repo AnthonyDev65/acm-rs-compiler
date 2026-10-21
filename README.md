@@ -16,13 +16,23 @@ Los scripts usan la extensión `.acm`. Las extensiones con argumentos configurab
 
 ## Instalación
 
-Necesitas Rust (<https://rustup.rs>). Desde esta carpeta:
+No necesitas Rust. Ejecuta una sola línea:
 
-```bash
-cargo install --path .
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/AnthonyDev65/acm-rs-compiler/main/install.ps1 | iex
 ```
 
-Esto deja `acm` en `~/.cargo/bin`, que ya está en el PATH. Para actualizar, vuelve a ejecutar el mismo comando; para desinstalar, `cargo uninstall acm`.
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/AnthonyDev65/acm-rs-compiler/main/install.sh | sh
+```
+
+El instalador descarga el binario de la última [Release](https://github.com/AnthonyDev65/acm-rs-compiler/releases) y lo deja en el PATH (`%LOCALAPPDATA%\Programs\acm\bin` en Windows, `~/.local/bin` en macOS/Linux). Para actualizar, vuelve a ejecutar la misma línea; para una versión concreta, define antes `ACM_VERSION` (por ejemplo `v0.1.0`). Para desinstalar, borra esa carpeta o el archivo `acm`.
+
+**Desde el código fuente** (necesitas Rust, <https://rustup.rs>): `cargo install --path .` desde esta carpeta; se desinstala con `cargo uninstall acm`.
 
 **Windows, opcional:** para poder abrir los `.acm` con doble clic o ejecutarlos como `script.acm` en la terminal, ejecuta `acm --register`.
 
@@ -288,8 +298,11 @@ El navegador se abre al usar el primer comando web y se controla por el protocol
 | `WEBSCREENSHOT "pagina.png"` | Captura la página. |
 | `WEBBACK`, `WEBRELOAD` | Atrás y recargar. |
 | `WEBCLOSE` | Cierra el navegador. |
+| `WEBWAITCLOSE [ms]` | Espera a que el usuario cierre el navegador (sin límite o hasta `ms`). |
 
-Firefox no está soportado. Además, el navegador se cierra cuando termina `acm`. Si necesitas que siga abierto, usa `acm -i` o la consola interactiva.
+Firefox no está soportado. Además, el navegador se cierra cuando termina `acm`. Para dejarlo abierto mientras lo usas, termina el script con `WEBWAITCLOSE`. También puedes usar `acm -i` o la consola interactiva.
+
+Si el usuario cierra el navegador a mitad del script, los comandos web siguientes fallan con «el navegador se cerró» en vez de abrir otro. Solo `WEBOPEN` y `WEBTAB` abren uno nuevo.
 
 ### Funciones integradas
 
@@ -340,6 +353,7 @@ acm lista.acmx --ask        # pregunta los argumentos por consola
 | `src/web.rs` | Chrome/Edge por DevTools (crate `headless_chrome`). |
 | `src/extension.rs` | Directivas `@ARG` de los archivos `.acmx`. |
 | `src/out.rs` | Salida de texto o JSON. |
+| `ide/` | IDE de escritorio (Tauri). Es un proyecto aparte que usa `acm` como proceso (ver `ide/README.md`). |
 | `vendor/headless_chrome` | Copia de `headless_chrome` 1.0.22 con un solo cambio (ver `ACM_PATCH.md`): cada llamada al navegador tardaba unos 100 ms y ahora tarda unos 2 ms. |
 
 Pruebas: `cargo test`. Para comprobar todos los scripts sin ejecutar acciones: `acm --dry-run --no-dialogs archivo.acm`.

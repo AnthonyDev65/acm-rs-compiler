@@ -1,0 +1,228 @@
+---
+import { u } from "../lib/url";
+
+const more = [
+  { t: "Variables, funciones y bucles", d: "VAR, FUNC, IF, FOR … IN, WHILE y LOOP, con interpolación ${…} de cualquier expresión.", h: "/docs/#variables-y-funciones" },
+  { t: "Ventanas y procesos", d: "FOCUS, WAITWINDOW, OPEN y EXEC -> var. windows() y activewindow() listan lo que hay abierto.", h: "/docs/#sistema-archivos-y-ventanas" },
+  { t: "Capturas y píxeles", d: "SCREENSHOT de la pantalla o de una región y pixel(x, y) para leer colores. En píxeles físicos, aunque escales al 150 %.", h: "/docs/#sistema-archivos-y-ventanas" },
+  { t: "Portapapeles y archivos", d: "PASTE restaura tu portapapeles. WRITEFILE, APPENDFILE, read(), listdir() y parsejson().", h: "/docs/#funciones-integradas" },
+  { t: "Consola interactiva", d: "acm sin argumentos abre un REPL. Con -i entras en él al terminar el script, con sus variables cargadas.", h: "/docs/#línea-de-comandos" },
+  { t: "IDE de escritorio", d: "Editor con resaltado, autocompletado, errores en vivo con acm -c, F5 para ejecutar y Ctrl+F5 para simular.", h: "/docs/#estructura-del-código" },
+];
+---
+
+<section class="features wrap" id="lenguaje">
+  <h2 class="h-section reveal">Todo lo que necesitas<br />para automatizar tu PC</h2>
+
+  <div class="cards">
+    <!-- Ratón y teclado -->
+    <a class="card reveal" href={u("/docs/#ratón-y-teclado")}>
+      <div class="art grid-bg"><div class="box">
+        <svg class="path" viewBox="0 0 400 300" aria-hidden="true">
+          <path d="M70 220 C 140 210, 170 90, 300 80" fill="none" stroke="#3291ff" stroke-width="1.5" stroke-dasharray="4 6" />
+          <circle cx="70" cy="220" r="4" fill="#3291ff" />
+          <circle cx="300" cy="80" r="14" fill="none" stroke="#3291ff" stroke-width="1.5" class="pulse" />
+        </svg>
+        <span class="tag t1 mono">CLICK 70 220</span>
+        <span class="tag t2 mono">MOVE 300 80</span>
+        <svg class="mouse" width="18" height="26" viewBox="0 0 18 26" aria-hidden="true"><path d="M1 1v21l5.2-5 3.6 8 3.4-1.5-3.5-7.8H17z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <div class="keys mono"><kbd>CTRL</kbd><i>+</i><kbd>SHIFT</kbd><i>+</i><kbd class="hit">T</kbd></div>
+      </div></div>
+      <h3>Ratón y teclado <span>→</span></h3>
+      <p>Clics, arrastres, rueda y texto Unicode. Combinaciones como CTRL + SHIFT + T y repeticiones con (N).</p>
+    </a>
+
+    <!-- Chrome -->
+    <a class="card reveal" style="--d:80ms" href={u("/docs/#web-chrome--edge")}>
+      <div class="art grid-bg">
+        <div class="browser">
+          <div class="b-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url mono">example.com/login</span></div>
+          <div class="b-page">
+            <div class="b-title"></div>
+            <div class="field f1"><span class="sel mono">#user</span>anthoni</div>
+            <div class="field f2"><span class="sel mono">//input[@id='pass']</span>•••••••</div>
+            <div class="b-btn">Entrar</div>
+          </div>
+        </div>
+      </div>
+      <h3>Chrome sin WebDriver <span>→</span></h3>
+      <p>Chrome, Edge o Brave por DevTools. Selectores CSS o XPath y esperas automáticas de hasta 10 s.</p>
+    </a>
+
+    <!-- JSON -->
+    <a class="card reveal" style="--d:160ms" href={u("/docs/#uso-desde-agentes")}>
+      <div class="art json-art">
+        <div class="stream mono" aria-hidden="true">
+          <div class="lines">
+            {[0, 1].map(() => (
+              <>
+                <p><b>"event"</b>:<em>"start"</em>,<b>"statements"</b>:11</p>
+                <p><b>"event"</b>:<em>"step"</em>,<b>"line"</b>:7</p>
+                <p><b>"event"</b>:<em>"step"</em>,<b>"line"</b>:8</p>
+                <p><b>"event"</b>:<em>"screenshot"</em></p>
+                <p><b>"event"</b>:<em>"print"</em>,<b>"text"</b>:"PASS"</p>
+                <p class="g"><b>"event"</b>:<em>"done"</em>,<b>"ok"</b>:true,<b>"code"</b>:0</p>
+              </>
+            ))}
+          </div>
+        </div>
+      </div>
+      <h3>Hecho para agentes de IA <span>→</span></h3>
+      <p>Con --json cada línea es un evento. Códigos de salida fiables: 0, 1, 2 y 130.</p>
+    </a>
+
+    <!-- dry-run -->
+    <a class="card reveal" href={u("/docs/#línea-de-comandos")}>
+      <div class="art grid-bg">
+        <div class="ghost">
+          <div class="g-row"><span class="badge mono">dry</span><span class="mono">OPEN "notepad.exe"</span></div>
+          <div class="g-row"><span class="badge mono">dry</span><span class="mono">WRITE "Hola"</span></div>
+          <div class="g-row"><span class="badge mono">dry</span><span class="mono">KEY CTRL + A</span></div>
+          <div class="g-row"><span class="badge mono">dry</span><span class="mono">SCREENSHOT "a.png"</span></div>
+        </div>
+        <svg class="mouse ghosted" width="18" height="26" viewBox="0 0 18 26" aria-hidden="true"><path d="M1 1v21l5.2-5 3.6 8 3.4-1.5-3.5-7.8H17z" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="2 2"/></svg>
+      </div>
+      <h3>Simula antes de ejecutar <span>→</span></h3>
+      <p>--dry-run recorre el script sin mover el ratón, teclear ni abrir nada. -c solo comprueba la sintaxis.</p>
+    </a>
+
+    <!-- acmx -->
+    <a class="card reveal" style="--d:80ms" href={u("/docs/#extensiones-acmx")}>
+      <div class="art grid-bg">
+        <div class="form">
+          <p class="f-title">Lista de IPs</p>
+          <label><span>IP base</span><i class="mono">192.168.1</i></label>
+          <label><span>Protocolo</span><i class="mono">https ▾</i></label>
+          <label><span>Incluir puerto</span><i class="chk"></i></label>
+          <div class="f-run">Ejecutar</div>
+        </div>
+      </div>
+      <h3>Extensiones .acmx <span>→</span></h3>
+      <p>Las directivas @ARG convierten un script en una herramienta con formulario y argumentos tipados.</p>
+    </a>
+
+    <!-- failsafe -->
+    <a class="card reveal" style="--d:160ms" href={u("/docs/#línea-de-comandos")}>
+      <div class="art grid-bg">
+        <div class="screen">
+          <span class="corner mono">0,0</span>
+          <svg class="mouse tocorner" width="18" height="26" viewBox="0 0 18 26" aria-hidden="true"><path d="M1 1v21l5.2-5 3.6 8 3.4-1.5-3.5-7.8H17z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <span class="exit mono">exit 130</span>
+        </div>
+      </div>
+      <h3>Parada de emergencia <span>→</span></h3>
+      <p>Lleva el ratón a la esquina superior izquierda y el script se detiene antes de la siguiente acción.</p>
+    </a>
+  </div>
+
+  <div class="more">
+    {more.map((m, i) => (
+      <a class="item reveal" style={`--d:${(i % 3) * 70}ms`} href={u(m.h)}>
+        <h3>{m.t} <span>→</span></h3>
+        <p>{m.d}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .features { padding-top: 140px; }
+  .cards { margin-top: 64px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px 24px; }
+  .card { display: block; }
+  .card h3, .item h3 { margin-top: 24px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .card h3 span, .item h3 span { display: inline-block; transition: transform 200ms var(--ease); }
+  .card:hover h3 span, .item:hover h3 span { transform: translateX(4px); }
+  .card p, .item p { margin-top: 10px; color: var(--fg-2); font-size: 15px; line-height: 1.6; max-width: 40ch; }
+  .art {
+    position: relative; height: 300px; overflow: hidden;
+    border: 1px solid var(--line); background: var(--bg-1);
+    transition: border-color 200ms;
+  }
+  .card:hover .art { border-color: var(--line-2); }
+  .grid-bg {
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 40px 40px; background-position: -1px -1px;
+  }
+  .mono { font-family: var(--mono); }
+
+  /* ratón y teclado */
+  .box { position: absolute; left: 50%; top: 50%; width: 400px; height: 300px; transform: translate(-50%, -50%); }
+  .path { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pulse { transform-origin: 300px 80px; animation: pulse 2.2s ease-out infinite; }
+  @keyframes pulse { 0% { transform: scale(0.4); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+  .tag { position: absolute; font-size: 10.5px; color: var(--blue-2); padding: 2px 6px; border: 1px solid rgba(50,145,255,0.4); border-radius: 4px; background: #000; }
+  .t1 { left: 40px; top: 238px; } .t2 { left: 250px; top: 36px; }
+  .mouse { position: absolute; }
+  .box > .mouse { left: 70px; top: 220px; animation: travel 3.6s var(--ease) infinite; }
+  @keyframes travel {
+    0%, 15% { transform: translate(0, 0); }
+    55%, 85% { transform: translate(230px, -140px); }
+    100% { transform: translate(0, 0); }
+  }
+  .keys { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--fg-3); }
+  .keys kbd { padding: 6px 9px; border: 1px solid var(--line-2); border-bottom-width: 3px; border-radius: 6px; background: var(--bg-2); color: var(--fg); }
+  .keys .hit { animation: hit 1.8s ease-in-out infinite; }
+  @keyframes hit { 0%, 60%, 100% { transform: none; border-bottom-width: 3px; } 70% { transform: translateY(2px); border-bottom-width: 1px; border-color: var(--blue-2); } }
+
+  /* navegador */
+  .browser { position: absolute; left: 12%; right: 12%; top: 16%; bottom: -1px; border: 1px solid var(--line-2); border-radius: 10px 10px 0 0; background: #050505; overflow: hidden; }
+  .b-bar { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .b-bar .dots i { width: 7px; height: 7px; }
+  .url { flex: 1; font-size: 10px; color: var(--fg-3); background: var(--bg-2); border-radius: 5px; padding: 3px 8px; }
+  .b-page { padding: 16px 18px; display: grid; gap: 10px; }
+  .b-title { width: 45%; height: 10px; border-radius: 3px; background: var(--line-2); }
+  .field { position: relative; height: 30px; border: 1px solid var(--line-2); border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; color: var(--fg-2); }
+  .field .sel { position: absolute; right: 6px; top: -9px; font-size: 9.5px; color: var(--blue-2); background: #050505; padding: 0 4px; }
+  .f1 { animation: focus 3s infinite; } .f2 { animation: focus 3s 1.2s infinite; }
+  @keyframes focus { 0%, 30%, 100% { border-color: var(--line-2); box-shadow: none; } 10%, 25% { border-color: var(--blue-2); box-shadow: 0 0 0 3px var(--blue-soft); } }
+  .b-btn { justify-self: start; font-size: 11px; padding: 6px 14px; border-radius: 999px; background: var(--fg); color: #000; }
+
+  /* json */
+  .json-art { background: #050505; }
+  .stream { position: absolute; inset: 0; overflow: hidden; mask-image: linear-gradient(transparent, #000 25%, #000 75%, transparent); -webkit-mask-image: linear-gradient(transparent, #000 25%, #000 75%, transparent); }
+  .lines { padding: 0 22px; animation: scroll 9s linear infinite; }
+  .lines p { font-size: 11.5px; line-height: 2.4; color: var(--fg-3); white-space: nowrap; }
+  .lines b { color: #79c0ff; font-weight: 400; }
+  .lines em { color: #a5d6ff; font-style: normal; }
+  .lines p.g { color: var(--green); }
+  @keyframes scroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+
+  /* dry-run */
+  .ghost { position: absolute; left: 12%; right: 12%; top: 50%; transform: translateY(-50%); display: grid; gap: 8px; }
+  .g-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px dashed var(--line-2); border-radius: 8px; background: rgba(0,0,0,0.7); font-size: 11.5px; color: var(--fg-2); }
+  .g-row:nth-child(2) { border-color: rgba(50,145,255,0.6); color: var(--fg); }
+  .badge { font-size: 10px; color: var(--amber); border: 1px solid rgba(245,165,36,0.4); border-radius: 4px; padding: 0 5px; }
+  .ghosted { right: 18%; top: 22%; opacity: 0.7; animation: float 4s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translate(-14px, 10px); } }
+
+  /* formulario */
+  .form { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(78%, 280px); padding: 16px; border: 1px solid var(--line-2); border-radius: 10px; background: #070707; display: grid; gap: 10px; font-size: 11.5px; }
+  .f-title { font-size: 13px; font-weight: 600; }
+  .form label { display: flex; justify-content: space-between; align-items: center; color: var(--fg-2); }
+  .form label i { font-style: normal; color: var(--fg); border: 1px solid var(--line-2); border-radius: 5px; padding: 3px 8px; font-size: 10.5px; }
+  .form .chk { width: 14px; height: 14px; padding: 0 !important; background: var(--blue); border-color: var(--blue) !important; }
+  .f-run { justify-self: end; padding: 5px 12px; border-radius: 999px; background: var(--fg); color: #000; font-size: 11px; }
+
+  /* failsafe */
+  .screen { position: absolute; inset: 32px; border: 1px solid var(--line-2); border-radius: 8px; background: rgba(0,0,0,0.6); }
+  .corner { position: absolute; left: -1px; top: -1px; width: 44px; height: 44px; display: grid; place-items: center; font-size: 10px; color: var(--red); background: rgba(255,77,77,0.1); border: 1px dashed rgba(255,77,77,0.6); border-radius: 8px 0 6px 0; }
+  .tocorner { left: 60%; top: 58%; animation: corner 4s var(--ease) infinite; }
+  @keyframes corner { 0%, 10% { transform: translate(0, 0); } 55%, 90% { transform: translate(calc(-60cqw + 40px), -120px); opacity: 1; } 100% { transform: translate(0,0); opacity: 0; } }
+  .screen { container-type: inline-size; }
+  .exit { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: var(--red); opacity: 0; animation: exit 4s infinite; }
+  @keyframes exit { 0%, 52% { opacity: 0; } 60%, 90% { opacity: 1; } 100% { opacity: 0; } }
+
+  .more { margin-top: 72px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 24px; }
+  .item h3 { margin-top: 0; }
+
+  @media (max-width: 960px) {
+    .cards, .more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 620px) {
+    .features { padding-top: 96px; }
+    .cards, .more { grid-template-columns: 1fr; }
+    .art { height: 260px; }
+  }
+</style>

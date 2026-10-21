@@ -1,0 +1,561 @@
+---
+// Réplica interactiva del IDE de acm (ide/). Mismos colores, iconos y estructura que la app real;
+// el botón Ejecutar recorre el script en el navegador y escribe la salida como lo hace el IDE.
+import notepad from "../../../examples/notepad.acm?raw";
+import web from "../../../examples/prueba_web.acm?raw";
+import hola from "../../../examples/hola.acm?raw";
+import Mark from "./Mark.astro";
+
+const demo = `// Pulsa Ejecutar (F5) o Simular (Ctrl+F5)
+VAR nombre = "mundo"
+PRINT "Hola, \${nombre}! Estás en \${OS}"
+
+FOCUS "Bloc de notas"
+CLICK 420 300
+WRITE "Escrito por acm el \${now()}"
+KEYPRESS ENTER
+KEYPRESS TAB (2)
+PRINT "Pantalla: \${screenwidth()}x\${screenheight()}"`;
+
+const files = [
+  { name: "demo.acm", code: demo },
+  { name: "hola.acm", code: hola.trim() },
+  { name: "notepad.acm", code: notepad.trim() },
+  { name: "prueba_web.acm", code: web.trim() },
+];
+---
+
+<section class="ide-wrap wrap reveal" aria-label="El IDE de acm, interactivo">
+  <div class="ide" id="ide" data-files={JSON.stringify(files)} tabindex="-1">
+    <!-- Barra de título -->
+    <header class="tb">
+      <div class="tb-left">
+        <div class="logo"><Mark size={18} /></div>
+        <button class="btn" type="button" data-act="sidebar" title="Mostrar u ocultar el explorador">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>
+        </button>
+        <button class="btn soft" type="button" title="Archivo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M14 3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h3"/><path d="M14 3l5 5v4M14 3v3a2 2 0 0 0 2 2h3"/><path d="M17 15v6M14 18h6" stroke-linecap="round"/></svg>
+          <span>Archivo</span>
+        </button>
+      </div>
+      <div class="tb-center">
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="accent"><path d="M14 3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8z"/><path d="M9 13l-2 2 2 2M15 13l2 2-2 2"/></svg>
+          <span class="doc" data-doc>demo.acm</span>
+          <span class="chip" data-chip hidden></span>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="run-group">
+          <button class="btn run" type="button" data-act="run" title="Ejecutar (F5)">
+            <svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z" fill="currentColor"/></svg>
+            <span>Ejecutar</span>
+          </button>
+          <button class="btn" type="button" data-act="dry" title="Simular sin mover nada (Ctrl+F5)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7 15h10"/></svg>
+          </button>
+          <button class="btn stop" type="button" data-act="stop" title="Detener (Shift+F5)" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="14" height="14" rx="3"/></svg>
+          </button>
+        </div>
+        <button class="btn" type="button" title="Opciones de ejecución">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+        </button>
+        <button class="btn" type="button" title="Ajustes">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        </button>
+        <div class="win" aria-hidden="true">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></span>
+          <span class="x"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Área de trabajo -->
+    <main class="wb">
+      <aside class="panel explorer">
+        <header><span class="ptitle">examples</span></header>
+        <ul class="tree" data-tree>
+          {files.map((f, i) => (
+            <li>
+              <button type="button" class={`row${i === 0 ? " active" : ""}`} data-open={f.name}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8z"/><path d="M9 13l-2 2 2 2M15 13l2 2-2 2"/></svg>
+                <span>{f.name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      <div class="center">
+        <section class="panel editor">
+          <div class="tabs" data-tabs></div>
+          <div class="scroller" data-scroller>
+            <div class="code">
+              <div class="gutter" data-gutter aria-hidden="true"></div>
+              <div class="layers">
+                <div class="mark run" data-runline hidden></div>
+                <div class="mark err" data-errline hidden></div>
+                <pre class="hl" data-hl aria-hidden="true"></pre>
+                <textarea data-src spellcheck="false" autocomplete="off" wrap="off" aria-label="Editor de acm"></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel output">
+          <header>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M12 15h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="ptitle">Salida</span>
+            <button class="btn sm" type="button" data-act="clear" title="Limpiar la salida">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </header>
+          <div class="log" data-log aria-live="polite"></div>
+          <label class="input-row">
+            <span class="prompt">acm&gt;</span>
+            <input data-eval type="text" placeholder='Evalúa código acm: PRINT "hola", 2 * 21' spellcheck="false" autocomplete="off" />
+          </label>
+        </section>
+      </div>
+    </main>
+
+    <footer class="sb">
+      <span class="status" data-status></span>
+      <span class="spacer"></span>
+      <span data-pos>Ln 1, Col 1</span>
+      <span>acm 0.1.0</span>
+    </footer>
+  </div>
+  <p class="note">El IDE de escritorio de acm, aquí en una versión interactiva: edita, ejecuta con <kbd>F5</kbd> o simula con <kbd>Ctrl F5</kbd>. En tu PC, el IDE lanza el <span class="mono">acm</span> real.</p>
+</section>
+
+<style>
+  /* Fichas del IDE real (ide/src/styles.css) */
+  .ide {
+    --i-bg: #000; --i-panel: #0a0a0a; --i-raised: #161616;
+    --i-hover: rgb(255 255 255 / 0.06); --i-active: rgb(255 255 255 / 0.1);
+    --i-line: #1f1f1f; --i-line-2: #2e2e2e;
+    --i-text: #ededed; --i-text-2: #a1a1a1; --i-text-3: #6b6b6b;
+    --i-accent: #3291ff; --i-accent-soft: rgb(50 145 255 / 0.14);
+    --i-ok: #3fb950; --i-ok-soft: rgb(63 185 80 / 0.13);
+    --i-bad: #ff4d4d; --i-bad-soft: rgb(255 77 77 / 0.12); --i-info: #3291ff;
+    --lh: 22px;
+
+    position: relative;
+    display: grid; grid-template-rows: 44px minmax(0, 1fr) 28px; grid-template-columns: minmax(0, 1fr);
+    height: clamp(520px, 72vh, 680px);
+    background: var(--i-bg); color: var(--i-text);
+    border: 1px solid var(--i-line-2); border-radius: 12px; overflow: hidden;
+    font: 13px/1.45 var(--sans);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.02), 0 50px 140px -30px rgba(10, 114, 239, 0.35);
+    user-select: none; outline: none;
+  }
+  .ide button { font: inherit; color: inherit; }
+  .accent { color: var(--i-accent); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 30px; min-width: 30px; padding: 0 7px; border: 0; border-radius: 8px;
+    background: none; color: var(--i-text-2); cursor: pointer; transition: background-color 120ms, color 120ms, filter 120ms;
+  }
+  .btn:hover:not(:disabled) { background: var(--i-hover); color: var(--i-text); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn span { font-weight: 500; padding-right: 3px; }
+  .btn.soft { background: var(--i-hover); color: var(--i-text); }
+  .btn.sm { height: 26px; min-width: 26px; margin-left: auto; }
+
+  /* barra de título */
+  .tb { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding-left: 8px; min-width: 0; }
+  .tb-left, .tb-right { display: flex; align-items: center; gap: 2px; min-width: 0; }
+  .tb-right { justify-content: flex-end; }
+  .logo { display: grid; place-items: center; width: 30px; height: 30px; margin-right: 6px; border-radius: 8px; border: 1px solid var(--i-line-2); }
+  .logo { color: var(--i-text); }
+  .ide.running .logo :global(.acm-caret) { animation: acm-blink 1.06s steps(1) infinite; }
+  .tb-center { display: flex; justify-content: center; min-width: 0; }
+  .pill { display: flex; align-items: center; gap: 8px; height: 30px; max-width: 360px; padding: 0 14px; border-radius: 999px; background: var(--i-panel); border: 1px solid var(--i-line); font-size: 12.5px; }
+  .doc { color: var(--i-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc.dirty::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 7px; border-radius: 50%; background: var(--i-text-2); vertical-align: middle; }
+  .chip { padding: 1px 8px; border-radius: 999px; font-size: 11.5px; white-space: nowrap; background: var(--i-hover); }
+  .chip[data-state="busy"] { color: var(--i-accent); background: var(--i-accent-soft); }
+  .chip[data-state="ok"] { color: var(--i-ok); background: var(--i-ok-soft); }
+  .chip[data-state="bad"] { color: var(--i-bad); background: var(--i-bad-soft); }
+  .run-group { display: flex; align-items: center; gap: 2px; padding: 2px; margin-right: 6px; border-radius: 10px; background: var(--i-panel); border: 1px solid var(--i-line); }
+  .run-group .btn { height: 28px; }
+  .run-group .run:not(:disabled) { background: #ededed; color: #000; padding: 0 10px 0 9px; }
+  .run-group .run:not(:disabled):hover { filter: brightness(0.85); }
+  .run-group .stop:not(:disabled) { color: var(--i-bad); background: var(--i-bad-soft); }
+  .win { display: flex; align-self: stretch; margin-left: 6px; }
+  .win span { width: 46px; display: grid; place-items: center; color: var(--i-text-2); }
+  .win .x:hover { background: #e5484d; color: #fff; }
+
+  /* área de trabajo */
+  .wb { display: grid; grid-template-columns: 220px 6px minmax(0, 1fr); padding: 0 6px; min-height: 0; }
+  .ide.no-sidebar .wb { grid-template-columns: minmax(0, 1fr); }
+  .ide.no-sidebar .explorer { display: none; }
+  .panel { background: var(--i-panel); border: 1px solid var(--i-line); border-radius: 10px; overflow: hidden; }
+  .panel > header { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 6px 0 14px; color: var(--i-text-2); flex: none; }
+  .ptitle { font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--i-text-2); }
+  .explorer { grid-column: 1; display: flex; flex-direction: column; min-height: 0; }
+  .tree { padding: 0 6px 12px; overflow: auto; }
+  .row { display: flex; align-items: center; gap: 6px; width: 100%; height: 28px; padding: 0 8px 0 10px; border: 0; border-radius: 7px; background: none; color: var(--i-text-2); cursor: pointer; text-align: left; white-space: nowrap; }
+  .row svg { color: var(--i-accent); flex: none; }
+  .row:hover { background: var(--i-hover); color: var(--i-text); }
+  .row.active { background: var(--i-active); color: var(--i-text); }
+  .center { grid-column: 3; display: grid; grid-template-rows: minmax(0, 1fr) 6px 190px; min-width: 0; min-height: 0; }
+  .ide.no-sidebar .center { grid-column: 1; }
+  .output { grid-row: 3; }
+
+  /* editor */
+  .editor { display: flex; flex-direction: column; min-height: 0; }
+  .tabs { display: flex; gap: 2px; height: 40px; flex: none; padding: 5px 6px 0; border-bottom: 1px solid var(--i-line); overflow-x: auto; scrollbar-width: none; }
+  .tabs :global(.tab) { position: relative; display: flex; align-items: center; gap: 7px; padding: 0 6px 0 12px; border: 0; border-radius: 8px 8px 0 0; background: none; color: var(--i-text-3); cursor: pointer; white-space: nowrap; font: inherit; }
+  .tabs :global(.tab:hover) { color: var(--i-text-2); background: var(--i-hover); }
+  .tabs :global(.tab.active) { color: var(--i-text); }
+  .tabs :global(.tab.active svg) { color: var(--i-accent); }
+  .tabs :global(.tab.active::after) { content: ""; position: absolute; inset: auto 10px -1px; height: 2px; border-radius: 2px; background: var(--i-text); }
+  .tabs :global(.tab .x) { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; color: var(--i-text-3); visibility: hidden; }
+  .tabs :global(.tab:hover .x), .tabs :global(.tab.active .x) { visibility: visible; }
+  .tabs :global(.tab .x:hover) { background: var(--i-active); color: var(--i-text); }
+  .scroller { flex: 1; min-height: 0; overflow: auto; }
+  .code { position: relative; display: flex; min-height: 100%; padding: 6px 0 24px; font: 13px/var(--lh) var(--mono); }
+  .gutter { position: sticky; left: 0; z-index: 2; flex: none; padding: 0 14px 0 18px; text-align: right; color: var(--i-text-3); background: var(--i-panel); font-size: 12.5px; }
+  .gutter :global(div) { height: var(--lh); }
+  .gutter :global(.on) { color: var(--i-text); }
+  .layers { position: relative; flex: 1; min-width: max-content; }
+  .hl, textarea {
+    margin: 0; padding: 0 24px 0 4px; border: 0; outline: 0;
+    font: inherit; line-height: var(--lh); white-space: pre; tab-size: 4; letter-spacing: 0;
+  }
+  .hl { position: relative; z-index: 1; color: #ededed; pointer-events: none; }
+  textarea {
+    position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; resize: none; overflow: hidden;
+    background: transparent; color: transparent; -webkit-text-fill-color: transparent; caret-color: var(--i-accent);
+    user-select: text;
+  }
+  textarea::selection { background: rgb(50 145 255 / 0.3); -webkit-text-fill-color: transparent; }
+  .mark { position: absolute; left: -400px; right: 0; height: var(--lh); z-index: 0; }
+  .mark.run { background: var(--i-ok-soft); box-shadow: inset 3px 0 var(--i-ok); transition: top 120ms; }
+  .mark.err { background: var(--i-bad-soft); box-shadow: inset 3px 0 var(--i-bad); }
+  .mark[hidden] { display: none; }
+  .hl :global(.c) { color: #6e7681; }
+  .hl :global(.cmd) { color: #79c0ff; font-weight: 600; }
+  .hl :global(.kw) { color: #ff7b72; }
+  .hl :global(.s) { color: #a5d6ff; }
+  .hl :global(.i) { color: #ffa657; }
+  .hl :global(.n) { color: #79c0ff; }
+  .hl :global(.f) { color: #d2a8ff; }
+  .hl :global(.m) { color: #ffa657; }
+  .hl :global(.op) { color: #ff7b72; }
+
+  /* salida */
+  .output { display: flex; flex-direction: column; min-height: 0; }
+  .output > header { border-bottom: 1px solid var(--i-line); }
+  .log { flex: 1; overflow: auto; padding: 8px 14px; font: 12.5px/1.6 var(--mono); user-select: text; }
+  .log :global(.line) { white-space: pre-wrap; word-break: break-word; }
+  .log :global(.info) { color: var(--i-info); }
+  .log :global(.error), .log :global(.fail) { color: var(--i-bad); }
+  .log :global(.ok) { color: var(--i-ok); }
+  .log :global(.dry), .log :global(.step) { color: var(--i-text-2); }
+  .log :global(hr) { border: 0; border-top: 1px dashed var(--i-line-2); margin: 10px 0; }
+  .log :global(.goto) { padding: 0 6px; border: 0; border-radius: 4px; background: var(--i-hover); color: var(--i-text-2); font: 11px var(--mono); cursor: pointer; }
+  .log :global(.goto:hover) { background: var(--i-active); color: var(--i-text); }
+  .input-row { display: flex; align-items: center; gap: 10px; height: 36px; margin: 0 8px 8px; padding: 0 12px; border-radius: 8px; background: var(--i-bg); border: 1px solid var(--i-line); transition: border-color 150ms; }
+  .input-row:focus-within { border-color: rgb(50 145 255 / 0.55); }
+  .prompt { font: 600 12.5px var(--mono); color: var(--i-text-3); }
+  .input-row input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: 12.5px var(--mono); color: var(--i-text); }
+  .input-row input::placeholder { color: var(--i-text-3); }
+
+  .sb { display: flex; align-items: center; gap: 16px; padding: 0 12px 0 16px; color: var(--i-text-3); font-size: 12px; }
+  .spacer { flex: 1; }
+  .status[data-state="busy"] { color: var(--i-accent); }
+  .status[data-state="ok"] { color: var(--i-ok); }
+  .status[data-state="bad"] { color: var(--i-bad); }
+
+  .ide-wrap { margin-top: 56px; }
+  .note { margin-top: 16px; text-align: center; font-size: 13px; color: var(--fg-3); }
+  .note kbd { font-size: 11px; padding: 1px 6px; border: 1px solid var(--line-2); border-radius: 5px; background: var(--bg-2); color: var(--fg-2); }
+
+  @media (max-width: 860px) {
+    .ide { height: 600px; }
+    .wb { grid-template-columns: minmax(0, 1fr); }
+    .explorer { display: none; }
+    .center { grid-column: 1; grid-template-rows: minmax(0, 1fr) 6px 170px; }
+    .tb { grid-template-columns: auto 1fr auto; gap: 6px; }
+    .tb-left .soft, .tb-right > .btn, .win, .pill .chip { display: none; }
+    .tb-right { padding-right: 6px; }
+    .sb > span:nth-child(3) { display: none; }
+    .pill { padding: 0 10px; }
+  }
+  @media (max-width: 480px) {
+    .tb-center { display: none; }
+    .tb { grid-template-columns: 1fr auto; }
+    .code { font-size: 12px; }
+  }
+</style>
+
+<script>
+  type File = { name: string; code: string };
+  const root = document.getElementById("ide")!;
+  const q = <T extends Element = HTMLElement>(s: string) => root.querySelector(s) as T;
+  const src = q<HTMLTextAreaElement>("[data-src]"), hl = q("[data-hl]"), gutter = q("[data-gutter]");
+  const runMark = q("[data-runline]"), errMark = q("[data-errline]"), scroller = q("[data-scroller]");
+  const log = q("[data-log]"), tabsEl = q("[data-tabs]"), docEl = q("[data-doc]"), chip = q("[data-chip]");
+  const status = q("[data-status]"), posEl = q("[data-pos]"), evalIn = q<HTMLInputElement>("[data-eval]");
+  const btnRun = q<HTMLButtonElement>('[data-act="run"]'), btnDry = q<HTMLButtonElement>('[data-act="dry"]'), btnStop = q<HTMLButtonElement>('[data-act="stop"]');
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 20) : ms));
+
+  const files: File[] = JSON.parse(root.dataset.files!);
+  const saved = new Map(files.map((f) => [f.name, f.code]));
+  let open: string[] = ["demo.acm"], current = "demo.acm";
+
+  /* ---------- resaltado (misma paleta que el IDE) ---------- */
+  const CMDS = new Set("CLICK PRESS DOUBLECLICK RIGHTCLICK MIDDLECLICK MOVE DRAG SCROLL MOUSEDOWN MOUSEUP WRITE TYPE TEXT PASTE KEYPRESS KEY HOTKEY KEYDOWN KEYUP TYPEDELAY DELAY WAIT SLEEP PRINT ECHO LOG ASSERT ASK OPEN EXEC ALERT NOTIFY WRITEFILE APPENDFILE DELETEFILE MKDIR CLIPSET FOCUS WAITWINDOW SCREENSHOT ONERROR FAILSAFE IMPORT WEBBROWSER WEBPROFILE WEBOPEN WEBTAB WEBCLICK WEBINPUT WEBGET WEBWAIT WEBSELECT WEBCHECK WEBSCROLL WEBKEY WEBJS WEBSCREENSHOT WEBBACK WEBRELOAD WEBCLOSE WEBWAITCLOSE WEBTIMEOUT".split(" "));
+  const KWS = new Set("VAR LET SET IF ELSE ELSEIF ENDIF FOR IN TO STEP NEXT ENDFOR WHILE ENDWHILE LOOP INFINITE ENDLOOP BREAK CONTINUE RETURN EXIT FUNC ENDFUNC END AND OR NOT EMPTY TRUE FALSE NULL".split(" "));
+  const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  function hlLine(line: string): string {
+    let out = "", i = 0;
+    const m = line.match(/^(\s*)(@[A-Z]+(?::[A-Z]+)?)/);
+    if (m) { out += m[1] + `<span class="m">${m[2]}</span>`; i = m[0].length; }
+    while (i < line.length) {
+      const rest = line.slice(i);
+      let t: RegExpMatchArray | null;
+      if ((t = rest.match(/^(\/\/|#(?![\w{])).*/)) && (i === 0 || /\s/.test(line[i - 1]))) { out += `<span class="c">${esc(t[0])}</span>`; break; }
+      if ((t = rest.match(/^"(?:[^"\\]|\\.)*"?/))) {
+        out += `<span class="s">${esc(t[0]).replace(/\$\{[^}]*\}/g, (x) => `<span class="i">${x}</span>`)}</span>`;
+        i += t[0].length; continue;
+      }
+      if ((t = rest.match(/^'[^']*'?/))) { out += `<span class="s">${esc(t[0])}</span>`; i += t[0].length; continue; }
+      if ((t = rest.match(/^[A-Za-z_][\w]*/))) {
+        const w = t[0], U = w.toUpperCase();
+        if (CMDS.has(U)) out += `<span class="cmd">${w}</span>`;
+        else if (KWS.has(U)) out += `<span class="kw">${w}</span>`;
+        else if (rest[w.length] === "(") out += `<span class="f">${w}</span>`;
+        else out += w;
+        i += w.length; continue;
+      }
+      if ((t = rest.match(/^\d+(\.\d+)?(ms|s|min)?/))) { out += `<span class="n">${t[0]}</span>`; i += t[0].length; continue; }
+      if ((t = rest.match(/^(->|==|!=|<=|>=|\+=|\+\+|[-+*/%<>=!])/))) { out += `<span class="op">${esc(t[0])}</span>`; i += t[0].length; continue; }
+      out += esc(line[i]); i++;
+    }
+    return out;
+  }
+  function paint() {
+    const lines = src.value.split("\n");
+    hl.innerHTML = lines.map(hlLine).join("\n") + "\n";
+    gutter.innerHTML = lines.map((_, k) => `<div data-n="${k + 1}">${k + 1}</div>`).join("");
+    const longest = Math.max(...lines.map((l) => l.length));
+    src.style.width = `calc(${longest + 4}ch + 28px)`;
+    src.style.height = `${lines.length * 22 + 24}px`;
+    markCaret();
+  }
+  function markCaret() {
+    const before = src.value.slice(0, src.selectionStart);
+    const ln = before.split("\n").length, col = before.length - before.lastIndexOf("\n");
+    posEl.textContent = `Ln ${ln}, Col ${col}`;
+    gutter.querySelectorAll(".on").forEach((e) => e.classList.remove("on"));
+    gutter.querySelector(`[data-n="${ln}"]`)?.classList.add("on");
+  }
+  const showMark = (el: HTMLElement, line: number | null) => {
+    el.hidden = line == null;
+    if (line != null) {
+      el.style.top = `${(line - 1) * 22}px`;
+      const top = (line - 1) * 22, h = scroller.clientHeight;
+      if (top < scroller.scrollTop || top > scroller.scrollTop + h - 60) scroller.scrollTo({ top: Math.max(0, top - h / 3), behavior: reduced ? "auto" : "smooth" });
+    }
+  };
+
+  /* ---------- pestañas y archivos ---------- */
+  const fileIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8z"/><path d="M9 13l-2 2 2 2M15 13l2 2-2 2"/></svg>`;
+  function renderTabs() {
+    tabsEl.innerHTML = open.map((n) => `<button type="button" class="tab${n === current ? " active" : ""}" data-tab="${n}">${fileIcon}<span>${n}</span><span class="x" data-close="${n}" title="Cerrar">×</span></button>`).join("");
+    root.querySelectorAll<HTMLElement>("[data-open]").forEach((r) => r.classList.toggle("active", r.dataset.open === current));
+    docEl.textContent = current;
+    docEl.classList.toggle("dirty", src.value !== saved.get(current));
+  }
+  const buffers = new Map(saved);
+  function openFile(name: string) {
+    if (running) return;
+    buffers.set(current, src.value);
+    if (!open.includes(name)) open.push(name);
+    current = name;
+    src.value = buffers.get(name) ?? "";
+    showMark(runMark, null); showMark(errMark, null);
+    scroller.scrollTo({ top: 0, left: 0 });
+    paint(); renderTabs();
+  }
+  tabsEl.addEventListener("click", (e) => {
+    const t = e.target as HTMLElement;
+    const close = t.closest<HTMLElement>("[data-close]");
+    if (close) {
+      e.stopPropagation();
+      if (open.length === 1 || running) return;
+      const n = close.dataset.close!;
+      open = open.filter((x) => x !== n);
+      if (n === current) { buffers.set(n, src.value); current = ""; openFile(open[open.length - 1]); } else renderTabs();
+      return;
+    }
+    const tab = t.closest<HTMLElement>("[data-tab]"); if (tab) openFile(tab.dataset.tab!);
+  });
+  root.querySelectorAll<HTMLElement>("[data-open]").forEach((r) => r.addEventListener("click", () => openFile(r.dataset.open!)));
+  src.addEventListener("input", () => { paint(); renderTabs(); showMark(errMark, null); });
+  src.addEventListener("keyup", markCaret); src.addEventListener("click", markCaret);
+  src.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") { e.preventDefault(); const s = src.selectionStart; src.setRangeText("    ", s, src.selectionEnd, "end"); paint(); }
+  });
+
+  /* ---------- salida ---------- */
+  function write(kind: string, text: string, line?: number | null) {
+    const row = document.createElement("div");
+    row.className = `line ${kind}`;
+    if (line != null) {
+      const b = document.createElement("button");
+      b.className = "goto"; b.textContent = `línea ${line}`; b.title = "Ir a la línea";
+      b.onclick = () => { const p = src.value.split("\n").slice(0, line - 1).join("\n").length + (line > 1 ? 1 : 0); src.focus(); src.setSelectionRange(p, p); markCaret(); showMark(runMark, line); };
+      row.append(b, " ");
+    }
+    row.append(text);
+    log.append(row); log.scrollTop = log.scrollHeight;
+  }
+  const setStatus = (text: string, state: string) => {
+    status.textContent = text; status.dataset.state = state;
+    chip.hidden = !text; chip.textContent = text; chip.dataset.state = state;
+  };
+
+  /* ---------- intérprete de juguete ---------- */
+  type St = { line: number; kw: string; rest: string; code: string; rep: number };
+  const env: Record<string, unknown> = {};
+  const builtins: Record<string, () => unknown> = {
+    OS: () => "windows", NL: () => "\n", "screenwidth()": () => 1920, "screenheight()": () => 1080,
+    "mousex()": () => 640, "mousey()": () => 360, "now()": () => new Date().toLocaleString("sv").slice(0, 19),
+    "activewindow()": () => "Bloc de notas", "clipboard()": () => "",
+  };
+  function value(expr: string): unknown {
+    expr = expr.trim();
+    if (/^"(?:[^"\\]|\\.)*"$/.test(expr)) return interp(expr.slice(1, -1).replace(/\\"/g, '"'));
+    if (/^'[^']*'$/.test(expr)) return expr.slice(1, -1);
+    if (expr in builtins) return builtins[expr]();
+    if (expr in env) return env[expr];
+    if (/^[\d\s+\-*/%().]+$/.test(expr)) { try { return Function(`"use strict";return (${expr})`)(); } catch { /* sigue */ } }
+    const parts = splitTop(expr, "+");
+    if (parts.length > 1) {
+      const vs = parts.map(value);
+      return vs.every((v) => typeof v === "number") ? (vs as number[]).reduce((a, b) => a + b, 0) : vs.map(String).join("");
+    }
+    return expr;
+  }
+  function splitTop(s: string, sep: string): string[] {
+    const out: string[] = []; let depth = 0, str = false, cur = "";
+    for (const ch of s) {
+      if (ch === '"') str = !str;
+      if (!str && "([".includes(ch)) depth++;
+      if (!str && ")]".includes(ch)) depth--;
+      if (!str && depth === 0 && ch === sep) { out.push(cur); cur = ""; } else cur += ch;
+    }
+    out.push(cur); return out.map((x) => x.trim()).filter((x) => x !== "");
+  }
+  const interp = (s: string) => s.replace(/\$\{([^}]*)\}/g, (all, e) => { const v = value(e); return v === e.trim() ? all : String(v); });
+
+  function parse(code: string): St[] {
+    const out: St[] = [];
+    code.split("\n").forEach((raw, i) => {
+      const t = raw.replace(/^\s*(\/\/|#(?![\w{])).*$/, "").replace(/\s+\/\/.*$/, "").trim();
+      if (!t || t.startsWith("@")) return;
+      for (let part of t.split(/;(?=(?:[^"]*"[^"]*")*[^"]*$)/)) {
+        part = part.trim(); if (!part) continue;
+        let rep = 1; const r = part.match(/\s\((\d+)\)$/);
+        if (r) { rep = +r[1]; part = part.slice(0, r.index).trim(); }
+        const first = part.split(/[\s(]/)[0];
+        out.push({ line: i + 1, kw: first.toUpperCase(), rest: part.slice(first.length).trim(), code: part, rep });
+      }
+    });
+    return out;
+  }
+  const isAssign = (st: St) => /^[A-Za-z_]\w*(\[.*\])?\s*(=|\+=|\+\+)/.test(st.code);
+  const BLOCK = new Set(["IF", "ELSE", "ELSEIF", "ENDIF", "FOR", "NEXT", "ENDFOR", "WHILE", "ENDWHILE", "LOOP", "ENDLOOP", "FUNC", "ENDFUNC", "END", "RETURN", "BREAK", "CONTINUE", "}", "{"]);
+
+  let running = false, abort = false;
+  async function run(dry: boolean) {
+    if (running) return;
+    buffers.set(current, src.value);
+    const prog = parse(src.value);
+    if (log.childElementCount) log.append(document.createElement("hr"));
+    write("info", `${dry ? "Simulando" : "Ejecutando"} ${current}`);
+    showMark(errMark, null);
+    const bad = prog.find((s) => !CMDS.has(s.kw) && !KWS.has(s.kw) && !BLOCK.has(s.kw) && !isAssign(s));
+    if (bad) {
+      write("error", `error de sintaxis: comando desconocido '${bad.kw}'`, bad.line);
+      showMark(errMark, bad.line);
+      write("fail", "✗ Terminado con código 2 en 0 ms");
+      setStatus("Código 2", "bad");
+      return;
+    }
+    running = true; abort = false; root.classList.add("running");
+    btnRun.disabled = btnDry.disabled = true; btnStop.disabled = false;
+    setStatus(dry ? "Simulando…" : "Ejecutando…", "busy");
+    const t0 = performance.now();
+    for (const k of Object.keys(env)) delete env[k];
+    outer: for (const st of prog) {
+      for (let r = 0; r < st.rep; r++) {
+        if (abort) break outer;
+        showMark(runMark, st.line);
+        if (st.kw === "VAR" || st.kw === "LET" || st.kw === "SET" || isAssign(st)) {
+          const m = (st.kw === "VAR" || st.kw === "LET" || st.kw === "SET" ? st.rest : st.code).match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+          if (m) env[m[1]] = value(m[2]);
+          await sleep(140); continue;
+        }
+        if (dry && CMDS.has(st.kw) && !["PRINT", "ECHO", "LOG", "ASSERT"].includes(st.kw)) {
+          write("dry", st.kw === "KEYPRESS" ? `KEY ${st.rest} (Tap)` : `${st.kw} ${interp(st.rest)}`, st.line);
+          await sleep(110); continue;
+        }
+        switch (st.kw) {
+          case "PRINT": case "ECHO": case "LOG":
+            write("print", splitTop(st.rest, ",").map((x) => String(value(x))).join(" ")); break;
+          case "SCREENSHOT": case "WEBSCREENSHOT":
+            write("info", `Captura guardada: C:\\Users\\tú\\${String(value(splitTop(st.rest, " ")[0] ?? '"captura.png"'))}`); break;
+        }
+        const k = st.kw;
+        await sleep(k === "WRITE" || k === "TYPE" || k === "PASTE" ? 420 : k === "DELAY" || k === "WAIT" ? 500 : k.startsWith("WEB") ? 260 : BLOCK.has(k) ? 90 : 200);
+      }
+    }
+    const ms = Math.round(performance.now() - t0);
+    const fmt = ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`;
+    if (abort) { write("fail", `✗ Terminado con código 130 en ${fmt}`); setStatus("Código 130", "bad"); }
+    else { write("ok", `✓ Terminado en ${fmt}`); setStatus(`Terminado en ${fmt}`, "ok"); }
+    showMark(runMark, null);
+    running = false; root.classList.remove("running"); btnRun.disabled = btnDry.disabled = false; btnStop.disabled = true;
+  }
+
+  root.addEventListener("click", (e) => {
+    const act = (e.target as HTMLElement).closest<HTMLElement>("[data-act]")?.dataset.act;
+    if (act === "run") void run(false);
+    if (act === "dry") void run(true);
+    if (act === "stop") abort = true;
+    if (act === "clear") log.textContent = "";
+    if (act === "sidebar") root.classList.toggle("no-sidebar");
+  });
+  root.addEventListener("keydown", (e) => {
+    if (e.key !== "F5") return;
+    e.preventDefault();
+    if (e.shiftKey) abort = true; else void run(e.ctrlKey || e.metaKey);
+  });
+  evalIn.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || !evalIn.value.trim()) return;
+    const code = evalIn.value.trim(); evalIn.value = "";
+    write("input", `acm> ${code}`);
+    const st = parse(code)[0];
+    if (!st) return;
+    if (["PRINT", "ECHO", "LOG"].includes(st.kw)) write("print", splitTop(st.rest, ",").map((x) => String(value(x))).join(" "));
+    else if (CMDS.has(st.kw)) write("step", `${st.code}  (en esta demo no se ejecuta)`);
+    else write("print", String(value(code)));
+  });
+
+  src.value = saved.get(current)!;
+  paint(); renderTabs();
+  setStatus("", "");
+  const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { io.disconnect(); setTimeout(() => void run(false), 900); } }, { threshold: 0.5 });
+  io.observe(root);
+</script>

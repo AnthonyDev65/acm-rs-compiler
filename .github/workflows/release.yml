@@ -1,0 +1,86 @@
+# Compila acm para cada plataforma y publica los binarios en una Release de GitHub.
+# Se lanza al subir una etiqueta de versión:  git tag v0.1.0 && git push origin v0.1.0
+# Los scripts install.ps1 / install.sh descargan estos binarios desde releases/latest.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset: acm-windows-x86_64.exe
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            asset: acm-linux-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset: acm-macos-aarch64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            asset: acm-macos-x86_64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Dependencias de Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config clang libxcb1-dev libxrandr-dev libdbus-1-dev \
+            libpipewire-0.3-dev libwayland-dev libegl-dev libgbm-dev libxdo-dev libxkbcommon-dev
+
+      - name: Compilar
+        shell: bash
+        run: |
+          # En Windows, el runtime de C va dentro del exe: no hace falta vcruntime140.dll.
+          if [ "$RUNNER_OS" = "Windows" ]; then export RUSTFLAGS="-C target-feature=+crt-static"; fi
+          cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Preparar binario
+        shell: bash
+        run: |
+          mkdir dist
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            cp target/${{ matrix.target }}/release/acm.exe dist/${{ matrix.asset }}
+          else
+            cp target/${{ matrix.target }}/release/acm dist/${{ matrix.asset }}
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: dist/${{ matrix.asset }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publicar Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
+            install.ps1
+            install.sh
+          generate_release_notes: true

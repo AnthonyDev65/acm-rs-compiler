@@ -1,0 +1,56 @@
+---
+import { u, REPO } from "../lib/url";
+import Mark from "./Mark.astro";
+---
+
+<footer class="foot">
+  <div class="wrap grid">
+    <div class="brandcol">
+      <a class="brand" href={u("/")}>
+        <Mark size={22} />
+        <span>acm</span>
+      </a>
+      <p>Lenguaje de automatización de escritorio y web, escrito en Rust.</p>
+    </div>
+    <div>
+      <h4>Documentación</h4>
+      <a href={u("/docs/#instalación")}>Instalación</a>
+      <a href={u("/docs/#línea-de-comandos")}>Línea de comandos</a>
+      <a href={u("/docs/#el-lenguaje")}>El lenguaje</a>
+      <a href={u("/docs/#funciones-integradas")}>Funciones integradas</a>
+    </div>
+    <div>
+      <h4>Automatización</h4>
+      <a href={u("/docs/#ratón-y-teclado")}>Ratón y teclado</a>
+      <a href={u("/docs/#sistema-archivos-y-ventanas")}>Ventanas y archivos</a>
+      <a href={u("/docs/#web-chrome--edge")}>Web (Chrome / Edge)</a>
+      <a href={u("/docs/#uso-desde-agentes")}>Uso desde agentes</a>
+    </div>
+    <div>
+      <h4>Proyecto</h4>
+      <a href={REPO} target="_blank" rel="noopener">GitHub</a>
+      <a href={`${REPO}/tree/main/examples`} target="_blank" rel="noopener">Ejemplos</a>
+      <a href={`${REPO}/tree/main/ide`} target="_blank" rel="noopener">IDE de escritorio</a>
+      <a href={`${REPO}/blob/main/LICENSE`} target="_blank" rel="noopener">Licencia MIT</a>
+    </div>
+  </div>
+  <div class="wrap bottom">
+    <span>© 2026 Anthoni Castillo</span>
+    <span class="mono">acm 0.1.0</span>
+  </div>
+</footer>
+
+<style>
+  .foot { border-top: 1px solid var(--line); margin-top: 120px; padding: 56px 0 32px; background: var(--bg); }
+  .grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; letter-spacing: -0.04em; }
+  .brandcol p { margin-top: 12px; color: var(--fg-2); font-size: 14px; max-width: 30ch; }
+  h4 { font-size: 14px; font-weight: 500; margin-bottom: 12px; }
+  .grid a:not(.brand) { display: block; font-size: 14px; color: var(--fg-2); line-height: 2.1; transition: color 150ms; }
+  .grid a:not(.brand):hover { color: var(--fg); }
+  .bottom { display: flex; justify-content: space-between; margin-top: 48px; font-size: 13px; color: var(--fg-3); }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .brandcol { grid-column: 1 / -1; }
+  }
+</style>

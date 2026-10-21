@@ -1,0 +1,62 @@
+---
+import { u, REPO } from "../lib/url";
+
+const steps = [
+  { t: "Clona el repositorio", d: "Necesitas Rust, que se instala desde rustup.rs.", cmd: `git clone ${REPO}` },
+  { t: "Instala acm", d: "Dentro de la carpeta. Deja acm en ~/.cargo/bin. En Windows, compila desde PowerShell o cmd.", cmd: "cargo install --path ." },
+  { t: "Ejecuta tu primer script", d: "Como python: un archivo, código suelto con -e o la consola interactiva.", cmd: "acm -e 'PRINT \"hola\"'" },
+];
+---
+
+<section class="start wrap" id="empezar">
+  <div class="box reveal">
+    <div class="head">
+      <h2 class="h-section">Empieza en un minuto</h2>
+      <div class="cta">
+        <a class="btn btn-primary" href={u("/docs/#instalación")}>Guía de instalación</a>
+        <a class="btn btn-secondary" href={REPO} target="_blank" rel="noopener">Clonar el repositorio</a>
+      </div>
+    </div>
+    <ol class="steps">
+      {steps.map((s, i) => (
+        <li>
+          <span class="n mono">{i + 1}</span>
+          <h3>{s.t}</h3>
+          <p>{s.d}</p>
+          <button type="button" class="cmd mono" data-copy={s.cmd} aria-label={`Copiar: ${s.cmd}`}>
+            <span class="d">$</span> {s.cmd}
+            <span class="done" aria-live="polite"></span>
+          </button>
+        </li>
+      ))}
+    </ol>
+    <p class="os">
+      <span>Windows</span><span>macOS</span><span>Linux (X11)</span>
+      <span class="sep">·</span>
+      Navegador: Chrome, Edge o Brave
+    </p>
+  </div>
+</section>
+
+<style>
+  .start { padding-top: 160px; }
+  .box { border: 1px solid var(--line-2); border-radius: 20px; padding: clamp(28px, 5vw, 56px); background: radial-gradient(120% 80% at 100% 0%, rgba(10, 114, 239, 0.12), transparent 60%), var(--bg-1); }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .steps { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .steps li { display: flex; flex-direction: column; gap: 8px; }
+  .n { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line-2); font-size: 12px; color: var(--fg-2); }
+  .steps h3 { margin-top: 8px; font-size: 16px; font-weight: 600; }
+  .steps p { font-size: 14px; color: var(--fg-2); flex: 1; }
+  .cmd {
+    position: relative; margin-top: 8px; text-align: left; padding: 12px 14px; border-radius: 10px; cursor: copy;
+    background: #000; border: 1px solid var(--line-2); font-size: 13px; color: var(--fg);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: border-color 150ms;
+  }
+  .cmd:hover { border-color: #4a4a4a; }
+  .cmd .d { color: var(--fg-3); }
+  .cmd .done { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-family: var(--sans); font-size: 12px; color: var(--green); background: #000; }
+  .os { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--fg-3); }
+  .os span:not(.sep) { color: var(--fg-2); }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } .start { padding-top: 112px; } }
+</style>

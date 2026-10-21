@@ -1,0 +1,127 @@
+---
+// Salidas reales de acm 0.1.0 ejecutando los scripts de examples/ (algunas líneas recortadas).
+const tabs = [
+  {
+    id: "json", label: "--json", title: "Cada línea, un evento",
+    text: "Un agente lee la salida línea a línea: start, step, print, screenshot, error con su línea y, al final, done con el código y los milisegundos.",
+    out: [
+      ["cmd", "acm --json -v --no-dialogs examples/prueba_web.acm"],
+      ["", '{"event":"start","script":"examples\\\\prueba_web.acm","statements":11}'],
+      ["", '{"event":"step","line":7,"code":"WEBINPUT \\"#user\\" \\"anthoni\\""}'],
+      ["", '{"event":"step","line":10,"code":"WEBCLICK \\"#go\\""}'],
+      ["", '{"event":"screenshot","path":"C:\\\\…\\\\prueba_web.png"}'],
+      ["", '{"event":"print","text":"PASS: Bienvenido anthoni"}'],
+      ["ok", '{"event":"done","ok":true,"code":0,"ms":2755}'],
+    ],
+  },
+  {
+    id: "dry", label: "--dry-run", title: "Simula sin tocar nada",
+    text: "Recorre el script entero y emite un evento dry por cada acción. Ni el ratón ni el teclado se mueven, y nada se abre.",
+    out: [
+      ["cmd", "acm --dry-run --json examples/notepad.acm"],
+      ["", '{"event":"start","script":"examples\\\\notepad.acm","statements":17}'],
+      ["", '{"event":"dry","line":5,"action":"OPEN \\"notepad.exe\\""}'],
+      ["", '{"event":"dry","line":6,"action":"WAITWINDOW \\"Bloc de notas\\" 10000ms"}'],
+      ["", '{"event":"dry","line":11,"action":"KEY ENTER (Tap)"}'],
+      ["", '{"event":"dry","line":20,"action":"KEY CTRL + A (Tap)"}'],
+      ["", '{"event":"dry","line":26,"action":"SCREENSHOT \\"notepad.png\\""}'],
+      ["ok", '{"event":"done","ok":true,"code":0,"ms":31}'],
+    ],
+  },
+  {
+    id: "check", label: "-c", title: "Comprueba la sintaxis",
+    text: "Analiza el script sin ejecutarlo. Un error de sintaxis sale con código 2 y la línea exacta, para que el agente corrija antes de actuar.",
+    out: [
+      ["cmd", "acm -c examples/prueba_web.acm"],
+      ["ok", "OK: examples\\prueba_web.acm — sintaxis correcta (11 sentencias)"],
+      ["", ""],
+      ["cmd", "acm -e 'CLIK 10 20'"],
+      ["err", "error (línea 1): error de sintaxis: comando desconocido 'CLIK'"],
+      ["dim", "exit code 2"],
+    ],
+  },
+  {
+    id: "codes", label: "exit codes", title: "Decide por el código",
+    text: "El código de salida resume la ejecución sin leer nada más. EXIT N en el script devuelve el que quieras.",
+    out: [
+      ["ok", "0     todo correcto"],
+      ["err", "1     error en tiempo de ejecución"],
+      ["err", "2     error de sintaxis o de argumentos"],
+      ["warn", "130   cancelado con Ctrl+C o por FAILSAFE"],
+      ["", "N     el script ejecutó EXIT N"],
+    ],
+  },
+];
+---
+
+<section class="agents wrap" id="agentes">
+  <div class="head">
+    <h2 class="h-section reveal">Hecho para que lo use<br />un agente de IA</h2>
+    <p class="lede reveal" style="--d:80ms">
+      Pídele a tu agente que escriba un <span class="mono">.acm</span>, lo compruebe, lo simule y lo ejecute.
+      <strong>Salida estructurada, sin ventanas que bloqueen y códigos fiables</strong>: todo lo que necesita para saber qué pasó.
+    </p>
+  </div>
+
+  <div class="console reveal" style="--d:120ms" data-agents>
+    <div class="side" role="tablist" aria-orientation="vertical">
+      {tabs.map((t, i) => (
+        <button type="button" role="tab" aria-selected={i === 0 ? "true" : "false"} data-id={t.id}>
+          <span class="mono flag">{t.label}</span>
+          <span class="t">{t.title}</span>
+          <span class="d">{t.text}</span>
+        </button>
+      ))}
+    </div>
+    <div class="window term">
+      <div class="window-bar"><div class="dots"><i></i><i></i><i></i></div><span>Terminal</span></div>
+      {tabs.map((t, i) => (
+        <pre role="tabpanel" hidden={i !== 0} data-id={t.id}>{t.out.map(([k, s]) => (
+          k === "cmd" ? <span class="cmd"><span class="p">$ </span>{s}{"\n"}</span> : <span class={k}>{s}{"\n"}</span>
+        ))}</pre>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .agents { padding-top: 160px; }
+  .head { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: end; }
+  .console { margin-top: 56px; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 24px; align-items: stretch; }
+  .side { display: grid; gap: 8px; align-content: start; }
+  .side button {
+    display: grid; gap: 4px; text-align: left; padding: 16px 18px; cursor: pointer;
+    background: transparent; border: 1px solid var(--line); border-radius: var(--radius);
+    transition: border-color 150ms, background-color 150ms;
+  }
+  .side button:hover { border-color: var(--line-2); }
+  .side button[aria-selected="true"] { background: var(--bg-1); border-color: var(--line-2); }
+  .flag { font-size: 12px; color: var(--blue-2); }
+  .t { font-weight: 600; font-size: 15px; }
+  .d { display: none; color: var(--fg-2); font-size: 14px; line-height: 1.55; }
+  .side button[aria-selected="true"] .d { display: block; }
+  .term pre { min-height: 320px; font-size: 12.5px; color: var(--fg-2); white-space: pre; animation: fade 300ms ease; }
+  .term pre[hidden] { display: none; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } }
+  .cmd { color: var(--fg); }
+  .p { color: var(--fg-3); }
+  .ok { color: var(--green); }
+  .err { color: var(--red); }
+  .warn { color: var(--amber); }
+  .dim { color: var(--fg-3); }
+  @media (max-width: 960px) {
+    .head, .console { grid-template-columns: 1fr; }
+    .agents { padding-top: 112px; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-agents]").forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[role=tabpanel]")];
+    tabs.forEach((t) => t.addEventListener("click", () => {
+      tabs.forEach((x) => x.setAttribute("aria-selected", String(x === t)));
+      panels.forEach((p) => (p.hidden = p.dataset.id !== t.dataset.id));
+    }));
+  });
+</script>

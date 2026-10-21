@@ -335,19 +335,42 @@ pub struct WinInfo {
 pub fn windows() -> Result<Vec<WinInfo>, String> {
     let mut out = Vec::new();
     for w in xcap::Window::all().map_err(e)? {
-        let title = w.title().unwrap_or_default();
+        let id = w.id().unwrap_or(0);
+        let title = window_title(id).or_else(|| w.title().ok()).unwrap_or_default();
         let app = w.app_name().unwrap_or_default();
         if title.trim().is_empty() && app.trim().is_empty() {
             continue;
         }
         out.push(WinInfo {
-            id: w.id().unwrap_or(0),
+            id,
             title,
             app,
             focused: w.is_focused().unwrap_or(false),
         });
     }
     Ok(out)
+}
+
+/// Título de la ventana leído directamente. xcap falla con títulos que no son UTF-16 válido
+/// (por ejemplo, un emoji cortado) y la ventana se quedaba sin título.
+#[cfg(target_os = "windows")]
+fn window_title(id: u32) -> Option<String> {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{GetWindowTextLengthW, GetWindowTextW};
+    let hwnd = id as usize as windows_sys::Win32::Foundation::HWND;
+    unsafe {
+        let len = GetWindowTextLengthW(hwnd);
+        if len <= 0 {
+            return None;
+        }
+        let mut buf = vec![0u16; len as usize + 1];
+        let n = GetWindowTextW(hwnd, buf.as_mut_ptr(), buf.len() as i32);
+        (n > 0).then(|| String::from_utf16_lossy(&buf[..n as usize]))
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn window_title(_id: u32) -> Option<String> {
+    None
 }
 
 pub fn find_window(query: &str) -> Result<Option<WinInfo>, String> {

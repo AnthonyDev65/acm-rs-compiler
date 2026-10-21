@@ -1,0 +1,84 @@
+---
+import { Code } from "astro:components";
+import { acmGrammar } from "../lib/acm-grammar.mjs";
+import notepad from "../../../examples/notepad.acm?raw";
+import web from "../../../examples/prueba_web.acm?raw";
+import hola from "../../../examples/hola.acm?raw";
+
+const files = [
+  { name: "notepad.acm", code: notepad, about: "Abre el Bloc de notas, escribe, copia y comprueba el texto." },
+  { name: "prueba_web.acm", code: web, about: "Prueba E2E de un login en Chrome sin ventana." },
+  { name: "hola.acm", code: hola, about: "Variables, funciones, listas y datos del escritorio." },
+];
+const points = [
+  ["Una sentencia por línea", "Varias en la misma línea separadas por ;. Comentarios con // o #."],
+  ["Comandos en cualquier capitalización", "click es CLICK. Las variables sí distinguen mayúsculas."],
+  ["Textos que interpolan", "\"${i * 2}\", \"${upper(x)}\" o \"${ips[i]}\". Las rutas C:\\ no necesitan escapes."],
+  ["Repite sin bucles", "KEYPRESS TAB (3) o WRITE \"=\" (40) repiten un comando N veces."],
+];
+---
+
+<section class="show wrap">
+  <div class="text">
+    <h2 class="h-section reveal">Se lee como<br />lo dirías</h2>
+    <p class="lede reveal" style="--d:80ms">
+      Sin clases, sin imports, sin <span class="mono">async</span>. Un script de acm es la lista de cosas que harías tú con el ratón y el teclado,
+      con <strong>variables, funciones y bucles</strong> cuando los necesitas.
+    </p>
+    <dl class="points">
+      {points.map(([t, d], i) => (
+        <div class="reveal" style={`--d:${120 + i * 60}ms`}>
+          <dt>{t}</dt>
+          <dd>{d}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+
+  <div class="window code-win reveal" style="--d:120ms" data-tabs>
+    <div class="window-bar tabs" role="tablist">
+      {files.map((f, i) => (
+        <button type="button" role="tab" aria-selected={i === 0 ? "true" : "false"} data-i={i}>{f.name}</button>
+      ))}
+    </div>
+    {files.map((f, i) => (
+      <div class="panel" role="tabpanel" hidden={i !== 0} data-i={i}>
+        <p class="about">examples/{f.name} · {f.about}</p>
+        <Code code={f.code.trim()} lang={acmGrammar as any} theme="github-dark-default" />
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .show { padding-top: 160px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
+  .text { position: sticky; top: 110px; }
+  .lede { margin-top: 20px; }
+  .points { margin: 36px 0 0; display: grid; gap: 22px; }
+  .points dt { font-weight: 600; font-size: 15px; }
+  .points dd { margin: 4px 0 0; color: var(--fg-2); font-size: 15px; }
+  .tabs { gap: 4px; padding: 0 8px; }
+  .tabs button {
+    height: 30px; padding: 0 12px; border-radius: 8px; border: 0; background: transparent;
+    font-family: var(--mono); font-size: 12.5px; color: var(--fg-3); cursor: pointer; transition: color 150ms, background-color 150ms;
+  }
+  .tabs button:hover { color: var(--fg); }
+  .tabs button[aria-selected="true"] { background: var(--bg-3); color: var(--fg); }
+  .about { padding: 14px 20px 0; font-size: 12.5px; color: var(--fg-3); }
+  .panel :global(pre) { max-height: 560px; }
+  @media (max-width: 960px) {
+    .show { grid-template-columns: 1fr; padding-top: 112px; }
+    .text { position: static; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-tabs]").forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[role=tabpanel]")];
+    tabs.forEach((t) => t.addEventListener("click", () => {
+      tabs.forEach((x) => x.setAttribute("aria-selected", String(x === t)));
+      panels.forEach((p) => (p.hidden = p.dataset.i !== t.dataset.i));
+    }));
+  });
+</script>

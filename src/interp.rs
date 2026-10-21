@@ -1318,6 +1318,22 @@ impl Interp {
                     self.web.close();
                 }
             }
+            Cmd::WebWaitClose(timeout) => {
+                let limit = match timeout {
+                    Some(x) => Some(Duration::from_millis(self.n(x)?.max(0.0) as u64)),
+                    None => None,
+                };
+                if self.dry(|| "WEBWAITCLOSE".into()) {
+                    return Ok(());
+                }
+                let start = Instant::now();
+                while self.web.is_alive() {
+                    if limit.is_some_and(|l| start.elapsed() >= l) {
+                        return Err(Error::rt("tiempo agotado esperando a que se cierre el navegador".to_string()));
+                    }
+                    self.sleep_ms(300)?;
+                }
+            }
         }
         Ok(())
     }
