@@ -1,6 +1,24 @@
+<div align="center">
+
 # acm
 
-`acm` es un lenguaje de automatización y su intérprete de línea de comandos, escrito en Rust. Controla el ratón, el teclado, las ventanas, el portapapeles, las capturas de pantalla, los procesos y el navegador (Chrome/Edge) con una sintaxis de alto nivel. Se usa igual que `python`:
+*El lenguaje para automatizar tu PC: ratón, teclado, ventanas y navegador con scripts que se leen solos.*
+
+![El IDE de acm ejecuta un script que abre un perfil de GitHub en el navegador y muestra un ALERT](https://raw.githubusercontent.com/AnthonyDev65/acm-rs-compiler/main/docs/public/demo.gif)
+
+<sub>El IDE ejecutando <a href="https://github.com/AnthonyDev65/acm-rs-compiler/blob/main/examples/github.acm"><code>examples/github.acm</code></a>: abre un perfil de GitHub y avisa con un <code>ALERT</code>.</sub>
+
+`acm` es un lenguaje de automatización y su intérprete de línea de comandos, escrito en Rust. Controla el ratón, el teclado, las ventanas, el portapapeles, las capturas de pantalla, los procesos y el navegador (Chrome, Edge o Brave) con una sintaxis de alto nivel.
+
+Sirve para automatizaciones personales y para que **agentes de IA** controlen el PC y hagan pruebas: ofrece salida JSON, modo simulación (`--dry-run`) y códigos de salida fiables.
+
+**[Instalación](#instalación) · [Documentación](https://acm-rs.anthonidev.tech/docs/) · [Descargas](https://github.com/AnthonyDev65/acm-rs-compiler/releases/latest)**
+
+</div>
+
+---
+
+Se usa igual que `python`:
 
 ```bash
 acm script.acm                 # ejecutar un archivo
@@ -8,13 +26,7 @@ acm -e 'CLICK 500 300; WRITE "hola"'   # ejecutar código suelto
 acm                            # consola interactiva (REPL)
 ```
 
-Sirve para automatizaciones personales y para que **agentes de IA** controlen el PC y hagan pruebas. Ofrece salida JSON, modo simulación (`--dry-run`) y códigos de salida fiables.
-
 Los scripts usan la extensión `.acm`. Las extensiones con argumentos configurables usan `.acmx`.
-
-![El IDE de acm ejecuta un script que abre un perfil de GitHub en el navegador y muestra un ALERT](https://raw.githubusercontent.com/AnthonyDev65/acm-rs-compiler/main/docs/public/demo.gif)
-
-*El IDE ejecutando [`examples/github.acm`](https://github.com/AnthonyDev65/acm-rs-compiler/blob/main/examples/github.acm): abre un perfil de GitHub y avisa con un `ALERT`.*
 
 ---
 
